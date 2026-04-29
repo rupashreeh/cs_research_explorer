@@ -402,7 +402,35 @@ function makeMessages(prompt) {
 }
 
 function parseJSON(raw) {
-  return JSON.parse(raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim());
+  let s = raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+  try {
+    return JSON.parse(s);
+  } catch(e) {
+    // Try to recover truncated JSON by finding the last complete array entry
+    // and closing the structure
+    try {
+      // Remove trailing comma before closing brace/bracket
+      s = s.replace(/,\s*([}\]])/g, '$1');
+      return JSON.parse(s);
+    } catch(e2) {
+      try {
+        // Find last complete paper object and close the array + object
+        const lastBrace = s.lastIndexOf('}');
+        if (lastBrace !== -1) {
+          let fixed = s.slice(0, lastBrace + 1);
+          // Close papers array and root object if needed
+          const openBrackets = (fixed.match(/\[/g) || []).length;
+          const closeBrackets = (fixed.match(/\]/g) || []).length;
+          const openBraces = (fixed.match(/\{/g) || []).length;
+          const closeBraces = (fixed.match(/\}/g) || []).length;
+          for (let i = 0; i < openBrackets - closeBrackets; i++) fixed += ']';
+          for (let i = 0; i < openBraces - closeBraces; i++) fixed += '}';
+          return JSON.parse(fixed);
+        }
+      } catch(e3) {}
+      throw new Error('Invalid JSON from model: ' + e.message);
+    }
+  }
 }
 
 async function callClaude(prompt, signal) {
