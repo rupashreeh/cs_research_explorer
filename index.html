@@ -190,8 +190,17 @@ body {
 }
 .conf-pip.high { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
 .conf-pip.med  { background: #FAEEDA; color: #633806; border-color: #EF9F27; }
-.paper-authors { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+.paper-authors { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
 .paper-authors a { color: var(--accent); font-size: 11px; margin-left: 6px; }
+.paper-ss { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.ss-badge {
+  font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; white-space: nowrap;
+}
+.ss-badge.verified   { background: #E1F5EE; color: #085041; border: 0.5px solid #5DCAA5; }
+.ss-badge.unverified { background: #FCEBEB; color: #791F1F; border: 0.5px solid #F09595; }
+.ss-citations { font-size: 11px; color: var(--text-tertiary); }
+.unverified-card { border-color: rgba(240,149,149,0.4); }
+.unverified-card:hover { border-color: #F09595; }
 .paper-insight { font-size: 13px; line-height: 1.65; }
 .paper-insight em { color: var(--accent); font-style: normal; font-weight: 500; }
 
@@ -491,6 +500,68 @@ function mergeResults(settled, concept) {
   };
 }
 
+// ── Semantic Scholar verification ─────────────────────────────────────────
+
+async function lookupPaper(paper, signal) {
+  // Search by title — SS fuzzy matches well
+  const query = encodeURIComponent(paper.title);
+  const url = 'https://api.semanticscholar.org/graph/v1/paper/search?query=' + query +
+    '&limit=3&fields=title,authors,year,venue,externalIds,citationCount,openAccessPdf,url';
+  try {
+    const resp = await fetch(url, { signal: signal });
+    if (!resp.ok) return null;
+    const json = await resp.json();
+    const results = json.data || [];
+    // Find best match: same title (fuzzy) and year within 1
+    for (let i = 0; i < results.length; i++) {
+      const r = results[i];
+      const titleMatch = normTitle(r.title) === normTitle(paper.title);
+      const yearMatch  = Math.abs((r.year || 0) - (paper.year || 0)) <= 1;
+      if (titleMatch && yearMatch) return r;
+    }
+    // Looser match: just title similarity
+    if (results.length > 0 && normTitle(results[0].title) === normTitle(paper.title)) {
+      return results[0];
+    }
+    return null;
+  } catch(e) {
+    return null;
+  }
+}
+
+async function verifyWithSemanticScholar(papers, signal) {
+  // Rate limit: SS allows ~1 req/sec without API key — batch with small delays
+  const results = [];
+  for (let i = 0; i < papers.length; i++) {
+    if (i > 0) await new Promise(function(r) { setTimeout(r, 200); });
+    const paper = papers[i];
+    const ss = await lookupPaper(paper, signal);
+    if (ss) {
+      // Use SS data: real URL, citation count, open access PDF if available
+      const ssUrl = (ss.openAccessPdf && ss.openAccessPdf.url)
+        ? ss.openAccessPdf.url
+        : (ss.externalIds && ss.externalIds.DOI)
+          ? 'https://doi.org/' + ss.externalIds.DOI
+          : 'https://www.semanticscholar.org/paper/' + (ss.paperId || '');
+      results.push(Object.assign({}, paper, {
+        ssVerified:    true,
+        ssUrl:         ssUrl,
+        ssCitations:   ss.citationCount || 0,
+        ssId:          ss.paperId || null,
+        // Override AI-guessed URL with verified one
+        url:           ssUrl
+      }));
+    } else {
+      results.push(Object.assign({}, paper, {
+        ssVerified:  false,
+        ssCitations: null,
+        ssId:        null
+      }));
+    }
+  }
+  return results;
+}
+
 // ── Pipeline UI ───────────────────────────────────────────────────────────
 
 function showPipeline(steps) {
@@ -540,9 +611,11 @@ async function runSearch() {
     return { id: id, label: SOURCES[id].label, detail: 'Searching A* venues…' };
   });
   steps.push({ id: 'videos', label: 'Videos', detail: 'Finding tutorials & talks…' });
+  steps.push({ id: 'ss', label: 'Semantic Scholar', detail: 'Verifying papers…' });
   showPipeline(steps);
   activeSrcs.forEach(function(id) { setStep(id, 'running', 'Searching A* venues…'); });
   setStep('videos', 'running', 'Finding tutorials & talks…');
+  setStep('ss', 'pending', 'Waiting for papers…');
 
   try {
     const gather = gatherPrompt(concept, area);
@@ -577,7 +650,16 @@ async function runSearch() {
     const withPapers = settled.filter(function(r) { return r.papers.length > 0; });
     if (!withPapers.length) throw new Error('No papers found. Check your Cloudflare Worker secrets.');
 
-    renderResults(mergeResults(withPapers, concept), videos, concept);
+    const merged = mergeResults(withPapers, concept);
+
+    // Semantic Scholar verification
+    setStep('ss', 'running', 'Verifying ' + merged.papers.length + ' papers…');
+    const verified = await verifyWithSemanticScholar(merged.papers, signal);
+    const verifiedCount = verified.filter(function(p) { return p.ssVerified; }).length;
+    setStep('ss', 'done', verifiedCount + ' of ' + verified.length + ' verified');
+    merged.papers = verified;
+
+    renderResults(merged, videos, concept);
 
   } catch(err) {
     if (err.name === 'AbortError') return;
@@ -633,8 +715,12 @@ function renderResults(data, videos, concept) {
       const linkHtml = p.url
         ? ' <a href="' + esc(p.url) + '" target="_blank" rel="noopener" class="paper-link">↗ link</a>'
         : '';
+      const ssHtml = p.ssVerified
+        ? '<span class="ss-badge verified" title="Found on Semantic Scholar">✓ verified</span>' +
+          (p.ssCitations !== null ? '<span class="ss-citations">' + p.ssCitations.toLocaleString() + ' citations</span>' : '')
+        : '<span class="ss-badge unverified" title="Not found on Semantic Scholar — may be hallucinated">⚠ unverified</span>';
 
-      html += '<div class="paper-card">' +
+      html += '<div class="paper-card' + (p.ssVerified ? '' : ' unverified-card') + '">' +
         '<div class="paper-top">' +
         '<div class="paper-title">' + titleHtml + '<span class="paper-year">(' + p.year + ')</span></div>' +
         '<div class="paper-right">' +
@@ -642,6 +728,7 @@ function renderResults(data, videos, concept) {
         '<span class="venue-pill ' + vc + '">' + esc(p.venue) + '</span>' +
         '</div></div>' +
         '<div class="paper-authors">' + esc(p.authors || '') + linkHtml + '</div>' +
+        '<div class="paper-ss">' + ssHtml + '</div>' +
         '<div class="paper-insight">' + renderMd(p.insight) + '</div>' +
         '</div>';
     }
