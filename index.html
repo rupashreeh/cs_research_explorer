@@ -5,297 +5,214 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>CS Research Concept Explorer</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f3;
+  --bg-tertiary: #eeece8;
+  --text-primary: #1a1a18;
+  --text-secondary: #6b6b66;
+  --text-tertiary: #9c9c97;
+  --border-light: rgba(0,0,0,0.09);
+  --border-mid: rgba(0,0,0,0.16);
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --accent: #534AB7;
+  --accent-bg: #EEEDFE;
+  --accent-border: #AFA9EC;
+  --accent-text: #3C3489;
+}
+
+@media (prefers-color-scheme: dark) {
   :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f5f5f3;
-    --bg-tertiary: #eeece8;
-    --text-primary: #1a1a18;
-    --text-secondary: #6b6b66;
-    --text-tertiary: #9c9c97;
-    --border-light: rgba(0,0,0,0.10);
-    --border-mid: rgba(0,0,0,0.18);
-    --border-strong: rgba(0,0,0,0.28);
-    --accent: #534AB7;
-    --accent-bg: #EEEDFE;
-    --accent-border: #AFA9EC;
-    --radius-md: 8px;
-    --radius-lg: 12px;
+    --bg-primary: #1c1c1a; --bg-secondary: #252523; --bg-tertiary: #2e2e2b;
+    --text-primary: #f0ede8; --text-secondary: #9c9c97; --text-tertiary: #6b6b66;
+    --border-light: rgba(255,255,255,0.07); --border-mid: rgba(255,255,255,0.13);
+    --accent: #8b84d7; --accent-bg: #26215C; --accent-border: #534AB7; --accent-text: #AFA9EC;
   }
+}
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg-primary: #1c1c1a;
-      --bg-secondary: #252523;
-      --bg-tertiary: #2e2e2b;
-      --text-primary: #f0ede8;
-      --text-secondary: #9c9c97;
-      --text-tertiary: #6b6b66;
-      --border-light: rgba(255,255,255,0.08);
-      --border-mid: rgba(255,255,255,0.14);
-      --border-strong: rgba(255,255,255,0.22);
-      --accent: #8b84d7;
-      --accent-bg: #26215C;
-      --accent-border: #534AB7;
-    }
-  }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-tertiary); color: var(--text-primary);
+  min-height: 100vh; padding: 2rem 1rem; line-height: 1.6;
+}
+.app { max-width: 860px; margin: 0 auto; }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    min-height: 100vh;
-    padding: 2rem 1rem;
-    line-height: 1.6;
-  }
+.header { margin-bottom: 2rem; }
+.header h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 6px; }
+.header p { font-size: 14px; color: var(--text-secondary); max-width: 580px; }
 
-  .app {
-    max-width: 860px;
-    margin: 0 auto;
-  }
+.search-card {
+  background: var(--bg-primary); border: 0.5px solid var(--border-mid);
+  border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.5rem;
+}
+.search-row { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.search-row input, .search-row select {
+  font-size: 14px; padding: 9px 14px; border: 0.5px solid var(--border-mid);
+  border-radius: var(--radius-md); background: var(--bg-secondary);
+  color: var(--text-primary); outline: none;
+}
+.search-row input { flex: 1; min-width: 200px; transition: border-color 0.15s; }
+.search-row input:focus { border-color: var(--accent); }
+.search-row select { cursor: pointer; min-width: 155px; }
+.btn-primary {
+  font-size: 14px; padding: 9px 22px; border: none;
+  border-radius: var(--radius-md); background: var(--accent); color: #fff;
+  cursor: pointer; font-weight: 500; transition: opacity 0.15s; white-space: nowrap;
+}
+.btn-primary:hover { opacity: 0.85; }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* ── Header ── */
-  .header { margin-bottom: 2rem; }
-  .header h1 {
-    font-size: 24px; font-weight: 600; letter-spacing: -0.4px;
-    margin-bottom: 6px;
-  }
-  .header p { font-size: 14px; color: var(--text-secondary); max-width: 600px; }
+.sources-row {
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  padding-top: 12px; border-top: 0.5px solid var(--border-light);
+}
+.sources-row > span { font-size: 12px; color: var(--text-secondary); }
+.source-toggle {
+  display: flex; align-items: center; gap: 6px; font-size: 13px;
+  cursor: pointer; user-select: none;
+}
+.source-toggle input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color: var(--accent); }
+.openai-key { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.openai-key label { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+.openai-key input {
+  font-size: 12px; padding: 6px 10px; font-family: monospace;
+  border: 0.5px solid var(--border-mid); border-radius: var(--radius-md);
+  background: var(--bg-secondary); color: var(--text-primary); outline: none; width: 200px;
+}
 
-  /* ── Search Controls ── */
-  .search-card {
-    background: var(--bg-primary);
-    border: 0.5px solid var(--border-mid);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
-  }
-  .search-row {
-    display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
-  }
-  .search-row input {
-    flex: 1; min-width: 200px;
-    font-size: 14px; padding: 9px 14px;
-    border: 0.5px solid var(--border-mid);
-    border-radius: var(--radius-md);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .search-row input:focus { border-color: var(--accent); }
-  .search-row select {
-    font-size: 14px; padding: 9px 12px;
-    border: 0.5px solid var(--border-mid);
-    border-radius: var(--radius-md);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    outline: none; cursor: pointer;
-    min-width: 160px;
-  }
-  .search-row button {
-    font-size: 14px; padding: 9px 20px;
-    border: 0.5px solid var(--border-mid);
-    border-radius: var(--radius-md);
-    background: var(--accent);
-    color: #fff;
-    cursor: pointer;
-    font-weight: 500;
-    transition: opacity 0.15s;
-    white-space: nowrap;
-  }
-  .search-row button:hover { opacity: 0.88; }
-  .search-row button:disabled { opacity: 0.5; cursor: not-allowed; }
+.tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; align-items: center; }
+.tags-label { font-size: 12px; color: var(--text-secondary); }
+.tag {
+  font-size: 12px; padding: 5px 12px; border-radius: 999px;
+  border: 0.5px solid var(--border-mid); color: var(--text-secondary);
+  cursor: pointer; background: var(--bg-primary); transition: all 0.15s; user-select: none;
+}
+.tag:hover { background: var(--bg-secondary); color: var(--text-primary); }
+.tag.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
 
-  /* ── API Key input ── */
-  .apikey-row {
-    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-    padding-top: 10px;
-    border-top: 0.5px solid var(--border-light);
-  }
-  .apikey-row label { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
-  .apikey-row input {
-    flex: 1; min-width: 240px; font-size: 13px;
-    padding: 7px 12px; font-family: monospace;
-    border: 0.5px solid var(--border-mid);
-    border-radius: var(--radius-md);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    outline: none;
-  }
-  .apikey-note { font-size: 11px; color: var(--text-tertiary); }
+/* Pipeline steps */
+.pipeline {
+  background: var(--bg-primary); border: 0.5px solid var(--border-mid);
+  border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+}
+.pipeline-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 14px; }
+.pipeline-steps { display: flex; flex-direction: column; gap: 10px; }
+.pipeline-step { display: flex; align-items: center; gap: 12px; }
+.step-icon {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+}
+.step-icon.pending  { background: var(--bg-secondary); color: var(--text-tertiary); border: 0.5px solid var(--border-mid); }
+.step-icon.running  { background: var(--accent-bg); color: var(--accent); border: 0.5px solid var(--accent-border); animation: breathe 1.2s infinite; }
+.step-icon.done     { background: #E1F5EE; color: #085041; border: 0.5px solid #5DCAA5; }
+.step-icon.error    { background: #FCEBEB; color: #791F1F; border: 0.5px solid #F09595; }
+@keyframes breathe { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.step-label { font-size: 13px; color: var(--text-secondary); }
+.step-label strong { color: var(--text-primary); font-weight: 500; }
+.step-label .step-detail { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
 
-  /* ── Suggestion Tags ── */
-  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; align-items: center; }
-  .tags-label { font-size: 12px; color: var(--text-secondary); }
-  .tag {
-    font-size: 12px; padding: 5px 12px;
-    border-radius: 999px;
-    border: 0.5px solid var(--border-mid);
-    color: var(--text-secondary);
-    cursor: pointer;
-    background: var(--bg-primary);
-    transition: all 0.15s;
-    user-select: none;
-  }
-  .tag:hover { background: var(--bg-secondary); color: var(--text-primary); }
-  .tag.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+/* Results */
+.narrative-box {
+  background: var(--bg-primary); border: 0.5px solid var(--border-mid);
+  border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.75rem;
+}
+.narrative-box h3 {
+  font-size: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 10px;
+}
+.narrative-text { font-size: 15px; line-height: 1.8; }
+.narrative-text strong { font-weight: 600; color: var(--accent); }
 
-  /* ── Status ── */
-  .status {
-    font-size: 13px; color: var(--text-secondary);
-    margin-bottom: 1.25rem; min-height: 22px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #1D9E75; flex-shrink: 0;
-    animation: pulse 1.2s infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.sources-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; padding: 3px 9px; border-radius: 999px;
+  background: var(--bg-secondary); border: 0.5px solid var(--border-mid);
+  color: var(--text-secondary); margin-top: 12px;
+}
+.sources-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; }
 
-  /* ── Evolution Summary ── */
-  .evolution-box {
-    background: var(--bg-primary);
-    border: 0.5px solid var(--border-mid);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1.75rem;
-  }
-  .evolution-box h3 {
-    font-size: 13px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.5px; color: var(--text-secondary);
-    margin-bottom: 10px;
-  }
-  .evolution-text { font-size: 14px; line-height: 1.75; }
-  .evolution-text strong { font-weight: 600; color: var(--accent); }
+.timeline-bar {
+  display: flex; margin-bottom: 1.75rem;
+  border-radius: var(--radius-md); overflow: hidden;
+  border: 0.5px solid var(--border-mid); background: var(--bg-primary);
+}
+.tbar-seg {
+  flex: 1; padding: 10px 6px; text-align: center; font-size: 12px;
+  cursor: pointer; border-right: 0.5px solid var(--border-light);
+  color: var(--text-secondary); transition: background 0.15s;
+}
+.tbar-seg:last-child { border-right: none; }
+.tbar-seg:hover { background: var(--bg-secondary); }
+.tbar-seg.has-data { color: var(--text-primary); font-weight: 500; }
+.tbar-seg .tbar-sub { display: block; font-size: 10px; color: var(--text-secondary); font-weight: 400; margin-top: 2px; }
 
-  /* ── Timeline Bar ── */
-  .timeline-bar {
-    display: flex; gap: 0; margin-bottom: 1.75rem;
-    border-radius: var(--radius-md); overflow: hidden;
-    border: 0.5px solid var(--border-mid);
-    background: var(--bg-primary);
-  }
-  .tbar-seg {
-    flex: 1; padding: 10px 6px; text-align: center;
-    font-size: 12px; cursor: pointer;
-    border-right: 0.5px solid var(--border-light);
-    color: var(--text-secondary);
-    transition: background 0.15s;
-  }
-  .tbar-seg:last-child { border-right: none; }
-  .tbar-seg:hover { background: var(--bg-secondary); }
-  .tbar-seg.has-papers { color: var(--text-primary); font-weight: 500; }
-  .tbar-seg .tbar-count {
-    display: block; font-size: 10px;
-    color: var(--text-secondary); font-weight: 400; margin-top: 2px;
-  }
-  .tbar-seg.active { background: var(--accent-bg); color: var(--accent); }
-  .tbar-seg.active .tbar-count { color: var(--accent); opacity: 0.75; }
+.decade-section { margin-bottom: 2rem; }
+.decade-label {
+  font-size: 12px; font-weight: 600; color: var(--text-secondary);
+  letter-spacing: 0.5px; text-transform: uppercase;
+  margin-bottom: 0.75rem; padding-bottom: 8px;
+  border-bottom: 0.5px solid var(--border-light);
+  display: flex; align-items: center; gap: 10px;
+}
+.decade-badge {
+  font-size: 11px; background: var(--bg-secondary); padding: 2px 8px;
+  border-radius: 999px; border: 0.5px solid var(--border-light);
+  color: var(--text-secondary); font-weight: 400; text-transform: none; letter-spacing: 0;
+}
 
-  /* ── Decade Section ── */
-  .decade-section { margin-bottom: 2rem; }
-  .decade-label {
-    font-size: 12px; font-weight: 600; color: var(--text-secondary);
-    letter-spacing: 0.5px; text-transform: uppercase;
-    margin-bottom: 0.75rem; padding-bottom: 8px;
-    border-bottom: 0.5px solid var(--border-light);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .decade-badge {
-    font-size: 11px; background: var(--bg-secondary);
-    padding: 2px 8px; border-radius: 999px;
-    border: 0.5px solid var(--border-light);
-    text-transform: none; letter-spacing: 0;
-    color: var(--text-secondary); font-weight: 400;
-  }
+.paper-card {
+  background: var(--bg-primary); border: 0.5px solid var(--border-light);
+  border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px;
+  transition: border-color 0.15s;
+}
+.paper-card:hover { border-color: var(--border-mid); }
+.paper-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.paper-title { font-size: 14px; font-weight: 500; line-height: 1.5; flex: 1; }
+.paper-year { font-size: 12px; color: var(--text-secondary); font-weight: 400; margin-left: 4px; }
+.paper-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+.venue-pill { font-size: 11px; padding: 3px 9px; border-radius: 999px; white-space: nowrap; font-weight: 500; }
+.v-pldi  { background:#E6F1FB; color:#0C447C; }
+.v-popl  { background:#EEEDFE; color:#3C3489; }
+.v-sosp  { background:#E1F5EE; color:#085041; }
+.v-osdi  { background:#FAECE7; color:#712B13; }
+.v-lics  { background:#FAEEDA; color:#633806; }
+.v-cav   { background:#EAF3DE; color:#27500A; }
+.v-fm    { background:#FBEAF0; color:#72243E; }
+.v-stoc  { background:#FCEBEB; color:#791F1F; }
+.v-icfp  { background:#E6F1FB; color:#185FA5; }
+.v-tacas { background:#FAEEDA; color:#854F0B; }
+.v-other { background:#f1efe8; color:#5F5E5A; }
+.conf-pip {
+  font-size: 10px; padding: 2px 7px; border-radius: 999px; font-weight: 600; white-space: nowrap;
+  background: var(--bg-secondary); color: var(--text-secondary); border: 0.5px solid var(--border-mid);
+}
+.conf-pip.high { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+.conf-pip.med  { background: #FAEEDA; color: #633806; border-color: #EF9F27; }
+.paper-authors { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+.paper-insight { font-size: 13px; line-height: 1.65; }
+.paper-insight em { color: var(--accent); font-style: normal; font-weight: 500; }
 
-  /* ── Paper Card ── */
-  .paper-card {
-    background: var(--bg-primary);
-    border: 0.5px solid var(--border-light);
-    border-radius: var(--radius-lg);
-    padding: 1rem 1.25rem;
-    margin-bottom: 10px;
-    transition: border-color 0.15s;
-  }
-  .paper-card:hover { border-color: var(--border-mid); }
-  .paper-top {
-    display: flex; align-items: flex-start;
-    justify-content: space-between; gap: 12px; margin-bottom: 6px;
-  }
-  .paper-title { font-size: 14px; font-weight: 500; line-height: 1.5; flex: 1; }
-  .paper-year { font-size: 12px; color: var(--text-secondary); font-weight: 400; margin-left: 4px; }
-  .venue-pill {
-    font-size: 11px; padding: 3px 9px;
-    border-radius: 999px; white-space: nowrap; flex-shrink: 0;
-    font-weight: 500;
-  }
-  /* Venue color classes */
-  .v-pldi  { background:#E6F1FB; color:#0C447C; }
-  .v-popl  { background:#EEEDFE; color:#3C3489; }
-  .v-sosp  { background:#E1F5EE; color:#085041; }
-  .v-osdi  { background:#FAECE7; color:#712B13; }
-  .v-lics  { background:#FAEEDA; color:#633806; }
-  .v-cav   { background:#EAF3DE; color:#27500A; }
-  .v-fm    { background:#FBEAF0; color:#72243E; }
-  .v-stoc  { background:#FCEBEB; color:#791F1F; }
-  .v-icfp  { background:#E6F1FB; color:#185FA5; }
-  .v-tacas { background:#FAEEDA; color:#854F0B; }
-  .v-other { background:#f1efe8; color:#5F5E5A; }
+.followup-row {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  padding: 1.25rem 0 0.5rem; border-top: 0.5px solid var(--border-light);
+}
+.followup-row button {
+  font-size: 13px; padding: 8px 16px; border: 0.5px solid var(--border-mid);
+  border-radius: var(--radius-md); background: var(--bg-primary); color: var(--text-primary);
+  cursor: pointer; transition: background 0.15s;
+}
+.followup-row button:hover { background: var(--bg-secondary); }
 
-  .paper-authors { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
-  .paper-insight { font-size: 13px; line-height: 1.65; }
-  .paper-insight em { color: var(--accent); font-style: normal; font-weight: 500; }
-
-  /* ── Follow-up actions ── */
-  .followup-row {
-    display: flex; gap: 10px; flex-wrap: wrap;
-    padding: 1.25rem 0 0.5rem;
-    border-top: 0.5px solid var(--border-light);
-    margin-top: 0.5rem;
-  }
-  .followup-row button {
-    font-size: 13px; padding: 8px 16px;
-    border: 0.5px solid var(--border-mid);
-    border-radius: var(--radius-md);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .followup-row button:hover { background: var(--bg-secondary); }
-
-  /* ── Loading ── */
-  .loading-overlay { text-align: center; padding: 3rem 0; }
-  .spinner {
-    width: 32px; height: 32px;
-    border: 2px solid var(--border-mid);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 14px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-overlay p { font-size: 14px; color: var(--text-secondary); }
-
-  /* ── Empty / Error ── */
-  .empty { text-align: center; padding: 3rem 0; color: var(--text-secondary); font-size: 14px; }
-  .error-box {
-    background: #FCEBEB; border: 0.5px solid #F09595;
-    border-radius: var(--radius-lg); padding: 1rem 1.25rem;
-    font-size: 13px; color: #791F1F;
-  }
-  .error-box strong { display: block; margin-bottom: 4px; font-weight: 600; }
-
-  hr { border: none; border-top: 0.5px solid var(--border-light); margin: 2rem 0; }
-
-  /* ── Scrollbar ── */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 99px; }
+.error-box {
+  background: #FCEBEB; border: 0.5px solid #F09595;
+  border-radius: var(--radius-lg); padding: 1rem 1.25rem;
+  font-size: 13px; color: #791F1F; margin-bottom: 1rem;
+}
+.error-box strong { display: block; margin-bottom: 4px; font-weight: 600; }
+hr { border: none; border-top: 0.5px solid var(--border-light); margin: 2rem 0; }
 </style>
 </head>
 <body>
@@ -303,13 +220,13 @@
 
   <div class="header">
     <h1>CS Research Concept Explorer</h1>
-    <p>Search any concept and see how it evolved across decades in A* venues — PLDI, POPL, SOSP, CAV, LICS, and more.</p>
+    <p>Searches Claude and ChatGPT in parallel, then synthesizes both into one coherent, deduplicated timeline.</p>
   </div>
 
   <div class="search-card">
     <div class="search-row">
       <input type="text" id="conceptInput"
-        placeholder="e.g. type inference, consensus algorithms, model checking..."
+        placeholder="e.g. type inference, consensus algorithms, model checking…"
         onkeydown="if(event.key==='Enter') runSearch()" />
       <select id="areaSelect">
         <option value="all">All areas</option>
@@ -318,206 +235,300 @@
         <option value="fm">Formal Methods</option>
         <option value="auto">Automata / Theory</option>
       </select>
-      <button id="searchBtn" onclick="runSearch()">Explore →</button>
+      <button class="btn-primary" id="searchBtn" onclick="runSearch()">Explore →</button>
     </div>
-
-    <div class="apikey-row">
-      <label for="apiKeyInput">Anthropic API key:</label>
-      <input type="password" id="apiKeyInput"
-        placeholder="sk-ant-..." autocomplete="off" />
-      <span class="apikey-note">Key stays local — never sent anywhere except api.anthropic.com</span>
+    <div class="sources-row">
+      <span>Sources:</span>
+      <label class="source-toggle">
+        <input type="checkbox" id="useClaudeChk" checked /> Claude
+      </label>
+      <label class="source-toggle">
+        <input type="checkbox" id="useGptChk" checked /> ChatGPT (GPT-4o)
+      </label>
+      <div class="openai-key">
+        <label for="gptKeyInput">OpenAI key:</label>
+        <input type="password" id="gptKeyInput" placeholder="sk-… (needed for GPT-4o)" autocomplete="off" />
+      </div>
     </div>
   </div>
 
-  <div class="tags" id="tagRow">
-    <span class="tags-label">Try:</span>
-  </div>
-
+  <div class="tags" id="tagRow"><span class="tags-label">Try:</span></div>
   <div id="mainContent"></div>
 
 </div>
-
 <script>
+const CLAUDE_PROXY = 'https://cs-research-proxy.rrangaiyengar.workers.dev';
+
 const SUGGESTIONS = [
-  "type inference", "garbage collection", "consensus algorithms",
-  "model checking", "linear types", "distributed transactions",
-  "program verification", "monads", "memory models", "theorem proving",
-  "dependent types", "Byzantine fault tolerance", "session types",
-  "abstract interpretation", "Paxos", "software transactional memory"
+  'type inference','garbage collection','consensus algorithms','model checking',
+  'linear types','distributed transactions','program verification','monads',
+  'memory models','theorem proving','dependent types','Byzantine fault tolerance',
+  'session types','abstract interpretation','Paxos','software transactional memory'
 ];
 
 const AREA_DESCS = {
-  all: 'programming languages (PLDI, POPL, ICFP, OOPSLA, ESOP), distributed systems (SOSP, OSDI, EuroSys, ASPLOS, USENIX ATC), formal methods (CAV, TACAS, FM, FMSD), and automata/theory (LICS, STOC, FOCS, CONCUR)',
-  pl:  'programming languages venues: PLDI, POPL, ICFP, OOPSLA, ESOP',
-  ds:  'distributed systems venues: SOSP, OSDI, EuroSys, ASPLOS, USENIX ATC',
-  fm:  'formal methods venues: CAV, TACAS, FM, FMSD, ATVA',
-  auto:'automata and theory venues: LICS, STOC, FOCS, CONCUR, ICALP'
+  all:  'programming languages (PLDI, POPL, ICFP, OOPSLA, ESOP), distributed systems (SOSP, OSDI, EuroSys, ASPLOS, USENIX ATC), formal methods (CAV, TACAS, FM, FMSD), and automata/theory (LICS, STOC, FOCS, CONCUR)',
+  pl:   'programming languages venues: PLDI, POPL, ICFP, OOPSLA, ESOP',
+  ds:   'distributed systems venues: SOSP, OSDI, EuroSys, ASPLOS, USENIX ATC',
+  fm:   'formal methods venues: CAV, TACAS, FM, FMSD, ATVA',
+  auto: 'automata and theory venues: LICS, STOC, FOCS, CONCUR, ICALP'
 };
 
 const VENUE_CLASSES = {
-  PLDI:'v-pldi', OOPSLA:'v-pldi', ESOP:'v-popl',
-  POPL:'v-popl',
-  SOSP:'v-sosp', EUROSYS:'v-sosp', ASPLOS:'v-sosp', 'USENIX ATC':'v-sosp',
-  OSDI:'v-osdi',
-  LICS:'v-lics', CONCUR:'v-lics',
-  CAV:'v-cav',
-  FM:'v-fm', FMSD:'v-fm',
-  STOC:'v-stoc', FOCS:'v-stoc',
-  ICFP:'v-icfp',
-  TACAS:'v-tacas', ATVA:'v-tacas'
+  PLDI:'v-pldi',OOPSLA:'v-pldi',ESOP:'v-popl',POPL:'v-popl',
+  SOSP:'v-sosp',EUROSYS:'v-sosp',ASPLOS:'v-sosp','USENIX ATC':'v-sosp',
+  OSDI:'v-osdi',LICS:'v-lics',CONCUR:'v-lics',CAV:'v-cav',
+  FM:'v-fm',FMSD:'v-fm',STOC:'v-stoc',FOCS:'v-stoc',
+  ICFP:'v-icfp',TACAS:'v-tacas',ATVA:'v-tacas'
 };
 
 function venueClass(v) {
-  const u = (v || '').toUpperCase();
-  for (const k in VENUE_CLASSES) {
-    if (u.includes(k)) return VENUE_CLASSES[k];
-  }
+  const u = (v||'').toUpperCase();
+  for (const k in VENUE_CLASSES) if (u.includes(k)) return VENUE_CLASSES[k];
   return 'v-other';
 }
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function renderMd(s) { return (s||'').replace(/\*\*(.*?)\*\*/g,'<em>$1</em>'); }
 
 function renderTags() {
   const row = document.getElementById('tagRow');
   SUGGESTIONS.forEach(s => {
     const t = document.createElement('span');
-    t.className = 'tag';
-    t.textContent = s;
-    t.onclick = () => {
-      document.getElementById('conceptInput').value = s;
-      runSearch();
-    };
+    t.className = 'tag'; t.textContent = s;
+    t.onclick = () => { document.getElementById('conceptInput').value = s; runSearch(); };
     row.appendChild(t);
   });
 }
 
-let currentAbort = null;
+// ── Prompts ───────────────────────────────────────────────────────────────
 
-async function runSearch() {
-  const concept = document.getElementById('conceptInput').value.trim();
-  const area    = document.getElementById('areaSelect').value;
-  const apiKey  = document.getElementById('apiKeyInput').value.trim();
+function gatherPrompt(concept, area) {
+  return `You are a computer science research expert.
 
-  if (!concept) {
-    document.getElementById('conceptInput').focus();
-    return;
-  }
-  if (!apiKey) {
-    document.getElementById('apiKeyInput').focus();
-    showError('Please enter your Anthropic API key above.');
-    return;
-  }
+Find 8-12 highly influential, REAL published papers about "${concept}" from top A* CS venues (${AREA_DESCS[area]}).
+Papers should span multiple decades. For each, write a 1-2 sentence insight about its contribution. Use **bold** for the single most important phrase.
 
-  if (currentAbort) currentAbort.abort();
-  currentAbort = new AbortController();
+Only include papers you are certain actually exist. Do not hallucinate titles or authors.
 
-  document.querySelectorAll('.tag').forEach(t =>
-    t.classList.toggle('active', t.textContent === concept));
-  document.getElementById('searchBtn').disabled = true;
+Respond ONLY with valid JSON, no markdown fences:
+{
+  "papers": [
+    { "title": "string", "authors": "string", "year": 1985, "venue": "POPL", "insight": "string" }
+  ]
+}`;
+}
 
-  const main = document.getElementById('mainContent');
-  main.innerHTML = `<div class="loading-overlay">
-    <div class="spinner"></div>
-    <p>Searching A* venues for "<strong>${esc(concept)}</strong>"…</p>
-  </div>`;
+function synthesisPrompt(concept, claudePapers, gptPapers) {
+  return `You are a computer science research expert. Two AI models were asked to find influential papers about "${concept}" from top A* CS venues. Here are their results:
 
-  const prompt = `You are a computer science research expert with deep knowledge of the academic literature.
+=== Claude's papers ===
+${JSON.stringify(claudePapers, null, 2)}
 
-The user wants to explore how the concept of "${concept}" evolved across decades in top A* CS venues (${AREA_DESCS[area]}).
+=== GPT-4o's papers ===
+${JSON.stringify(gptPapers, null, 2)}
 
-Your task:
-1. Identify 8–12 highly influential, REAL published papers from these venues that are about or directly contributed to "${concept}".
-2. Papers should span multiple decades where applicable (earliest relevant work through recent).
-3. For each paper include a 1-2 sentence insight describing its specific contribution to the evolution of "${concept}". Use **bold** around the single most important key phrase.
-4. Write a 3-4 sentence narrative about how "${concept}" evolved over time — from early ideas to mature/modern state.
+Your job: synthesize these into ONE high-quality, coherent response.
 
-Only include papers you are confident actually exist and were published in those venues. Do not hallucinate papers.
+Rules:
+1. Deduplicate: if both models found the same paper (same or very similar title), include it once. Papers found by both models have higher confidence.
+2. Verify quality: include a paper only if you are confident it is real and genuinely important for "${concept}". Discard any that seem hallucinated.
+3. Write a unified 4-5 sentence narrative about how "${concept}" evolved — drawing on the best insights from both models' evolution summaries.
+4. For each paper, write a fresh, synthesized insight (1-2 sentences) that captures the best of what both models said. Use **bold** for the key idea.
+5. Add a "confidence" field: "high" if both models found this paper, "medium" if only one did.
+6. Aim for 10-15 of the strongest papers total, well-distributed across decades.
 
-Respond ONLY with a valid JSON object — no markdown fences, no preamble, no trailing text. Exactly this schema:
+Respond ONLY with valid JSON, no markdown fences, no preamble:
 {
   "concept": "string",
-  "evolution_summary": "string (3-4 sentences, may use **bold**)",
+  "evolution_summary": "string (4-5 sentences, use **bold** for key terms)",
+  "sources_used": "Claude + GPT-4o",
+  "total_candidates": ${claudePapers.length + gptPapers.length},
   "papers": [
     {
-      "title": "Full paper title",
-      "authors": "First Author, Second Author (et al. if >3)",
-      "year": 1985,
+      "title": "string",
+      "authors": "string",
+      "year": 1990,
       "venue": "POPL",
-      "insight": "1-2 sentences. Use **bold** for the key idea.",
-      "area": "pl | ds | fm | auto"
+      "insight": "string",
+      "confidence": "high | medium"
     }
   ]
 }`;
+}
+
+// ── Model calls ───────────────────────────────────────────────────────────
+
+async function callClaude(promptText, signal) {
+  const resp = await fetch(CLAUDE_PROXY, {
+    method: 'POST', signal,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 3000,
+      stream: true,
+      messages: [{ role: 'user', content: promptText }]
+    })
+  });
+  if (!resp.ok) {
+    const e = await resp.json().catch(() => ({}));
+    throw new Error(e?.error?.message || `Claude HTTP ${resp.status}`);
+  }
+  const reader = resp.body.getReader(), dec = new TextDecoder();
+  let buf = '';
+  while (true) {
+    const { done, value } = await reader.read(); if (done) break;
+    const chunk = dec.decode(value, { stream: true });
+    for (const line of chunk.split('\n')) {
+      if (!line.startsWith('data: ')) continue;
+      const d = line.slice(6); if (d === '[DONE]') continue;
+      try { const ev = JSON.parse(d); if (ev.type === 'content_block_delta' && ev.delta?.text) buf += ev.delta.text; } catch {}
+    }
+  }
+  return JSON.parse(buf.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim());
+}
+
+async function callGPT(promptText, apiKey, signal) {
+  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST', signal,
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      model: 'gpt-4o', max_tokens: 3000, temperature: 0.2,
+      messages: [
+        { role: 'system', content: 'You are a CS research expert. Respond only with valid JSON, no markdown.' },
+        { role: 'user', content: promptText }
+      ]
+    })
+  });
+  if (!resp.ok) {
+    const e = await resp.json().catch(() => ({}));
+    throw new Error(e?.error?.message || `OpenAI HTTP ${resp.status}`);
+  }
+  const json = await resp.json();
+  const raw = json.choices?.[0]?.message?.content || '{}';
+  return JSON.parse(raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim());
+}
+
+// ── Pipeline UI helpers ───────────────────────────────────────────────────
+
+function setStep(id, state, detail) {
+  const icon  = document.getElementById('icon-' + id);
+  const label = document.getElementById('detail-' + id);
+  if (icon)  icon.className  = `step-icon ${state}`;
+  if (label) label.textContent = detail || '';
+}
+
+function showPipeline(useClaude, useGpt) {
+  const steps = [];
+  if (useClaude) steps.push({ id: 'claude', label: 'Claude', detail: 'Searching A* venues…' });
+  if (useGpt)    steps.push({ id: 'gpt',    label: 'GPT-4o', detail: 'Searching A* venues…' });
+  if (useClaude && useGpt) steps.push({ id: 'synth', label: 'Synthesis', detail: 'Waiting for both sources…' });
+
+  const html = `<div class="pipeline">
+    <div class="pipeline-title">Building your answer</div>
+    <div class="pipeline-steps">
+      ${steps.map(s => `
+        <div class="pipeline-step">
+          <div class="step-icon running" id="icon-${s.id}">…</div>
+          <div class="step-label">
+            <strong>${s.label}</strong>
+            <div class="step-detail" id="detail-${s.id}">${s.detail}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────
+
+let currentAbort = null;
+
+async function runSearch() {
+  const concept   = document.getElementById('conceptInput').value.trim();
+  const area      = document.getElementById('areaSelect').value;
+  const useClaude = document.getElementById('useClaudeChk').checked;
+  const useGpt    = document.getElementById('useGptChk').checked;
+  const gptKey    = document.getElementById('gptKeyInput').value.trim();
+
+  if (!concept) { document.getElementById('conceptInput').focus(); return; }
+  if (!useClaude && !useGpt) { alert('Enable at least one source.'); return; }
+  if (useGpt && !gptKey) { document.getElementById('gptKeyInput').focus(); alert('Enter your OpenAI key to use GPT-4o as a source.'); return; }
+
+  if (currentAbort) currentAbort.abort();
+  currentAbort = new AbortController();
+  const signal = currentAbort.signal;
+
+  document.querySelectorAll('.tag').forEach(t => t.classList.toggle('active', t.textContent === concept));
+  document.getElementById('searchBtn').disabled = true;
+
+  showPipeline(useClaude, useGpt);
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      signal: currentAbort.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 3000,
-        stream: true,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    const gather = gatherPrompt(concept, area);
 
-    if (!resp.ok) {
-      const err = await resp.json().catch(() => ({}));
-      throw new Error(err?.error?.message || `HTTP ${resp.status}`);
+    // Phase 1 — gather in parallel
+    const [claudeResult, gptResult] = await Promise.all([
+      useClaude
+        ? callClaude(gather, signal)
+            .then(r => { setStep('claude', 'done', `Found ${r.papers?.length || 0} papers`); return r; })
+            .catch(e => { setStep('claude', 'error', e.message); return null; })
+        : Promise.resolve(null),
+      useGpt
+        ? callGPT(gather, gptKey, signal)
+            .then(r => { setStep('gpt', 'done', `Found ${r.papers?.length || 0} papers`); return r; })
+            .catch(e => { setStep('gpt', 'error', e.message); return null; })
+        : Promise.resolve(null)
+    ]);
+
+    const claudePapers = claudeResult?.papers || [];
+    const gptPapers    = gptResult?.papers    || [];
+
+    if (!claudePapers.length && !gptPapers.length) {
+      throw new Error('No papers found from either source. Check your API keys.');
     }
 
-    main.innerHTML = `
-      <div class="status">
-        <span class="dot"></span>
-        Streaming papers from the archives…
-      </div>
-      <div id="streamBuf" style="font-size:12px;color:var(--text-tertiary);font-family:monospace;padding:4px 0;min-height:18px;max-height:50px;overflow:hidden;"></div>`;
+    let finalData;
 
-    const reader  = resp.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer    = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      const chunk = decoder.decode(value, { stream: true });
-      for (const line of chunk.split('\n')) {
-        if (!line.startsWith('data: ')) continue;
-        const data = line.slice(6);
-        if (data === '[DONE]') continue;
-        try {
-          const ev = JSON.parse(data);
-          if (ev.type === 'content_block_delta' && ev.delta?.text) {
-            buffer += ev.delta.text;
-            const el = document.getElementById('streamBuf');
-            if (el) el.textContent = buffer.slice(-140);
-          }
-        } catch {}
-      }
+    // Phase 2 — synthesize if we have results from both
+    if (useClaude && useGpt && claudePapers.length && gptPapers.length) {
+      setStep('synth', 'running', 'Merging and synthesizing…');
+      finalData = await callClaude(synthesisPrompt(concept, claudePapers, gptPapers), signal);
+      setStep('synth', 'done', `Synthesized ${finalData.papers?.length || 0} papers from ${finalData.total_candidates || claudePapers.length + gptPapers.length} candidates`);
+    } else {
+      // Single source — still ask Claude to clean up and write a narrative
+      const onlyPapers = claudePapers.length ? claudePapers : gptPapers;
+      finalData = {
+        concept,
+        evolution_summary: '',
+        sources_used: claudePapers.length ? 'Claude' : 'GPT-4o',
+        papers: onlyPapers.map(p => ({ ...p, confidence: 'medium' }))
+      };
+      // Ask Claude for the narrative
+      const narrativeOnly = await callClaude(
+        `Write a 4-5 sentence narrative about how the concept of "${concept}" evolved in computer science research, from its origins to the modern day. Use **bold** for key terms. Respond ONLY with {"evolution_summary": "..."}`,
+        signal
+      );
+      finalData.evolution_summary = narrativeOnly.evolution_summary || '';
     }
 
-    const clean = buffer.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim();
-    const data  = JSON.parse(clean);
-    renderResults(data, concept);
+    renderResults(finalData, concept);
 
   } catch (err) {
     if (err.name === 'AbortError') return;
-    showError(err.message);
+    document.getElementById('mainContent').innerHTML =
+      `<div class="error-box"><strong>Error</strong>${esc(err.message)}</div>`;
   } finally {
     document.getElementById('searchBtn').disabled = false;
   }
 }
 
-function renderResults(data, queriedConcept) {
+// ── Render ────────────────────────────────────────────────────────────────
+
+function renderResults(data, concept) {
   const papers = (data.papers || []).sort((a, b) => a.year - b.year);
-  if (!papers.length) {
-    document.getElementById('mainContent').innerHTML =
-      '<div class="empty">No papers found. Try a different concept or area.</div>';
-    return;
-  }
+  const main = document.getElementById('mainContent');
 
   const byDecade = {};
   for (const p of papers) {
@@ -528,81 +539,73 @@ function renderResults(data, queriedConcept) {
 
   let html = '';
 
-  /* Evolution summary */
-  const summary = (data.evolution_summary || '')
+  // Narrative
+  const narrative = (data.evolution_summary || '')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  html += `<div class="evolution-box">
-    <h3>How "${esc(data.concept || queriedConcept)}" evolved</h3>
-    <div class="evolution-text">${summary}</div>
+  const sourceLabel = data.sources_used || 'Claude';
+  const candidateNote = data.total_candidates
+    ? `Synthesized from ${data.total_candidates} candidate papers across ${sourceLabel}.`
+    : `Source: ${sourceLabel}.`;
+
+  html += `<div class="narrative-box">
+    <h3>How "${esc(data.concept || concept)}" evolved</h3>
+    <div class="narrative-text">${narrative}</div>
+    <div class="sources-badge"><span class="dot"></span>${esc(candidateNote)}</div>
   </div>`;
 
-  /* Timeline bar */
+  // Timeline bar
   html += '<div class="timeline-bar">';
   for (const d of decades) {
     const n = byDecade[d].length;
-    html += `<div class="tbar-seg has-papers" onclick="scrollTo('decade-${d}')">
-      ${d}s<span class="tbar-count">${n} paper${n > 1 ? 's' : ''}</span>
-    </div>`;
+    html += `<div class="tbar-seg has-data" onclick="scrollToId('dec-${d}')">${d}s<span class="tbar-sub">${n} paper${n > 1 ? 's' : ''}</span></div>`;
   }
   html += '</div>';
 
-  /* Papers by decade */
+  // Papers by decade
   for (const d of decades) {
     const ps = byDecade[d];
-    html += `<div class="decade-section" id="decade-${d}">
-      <div class="decade-label">
-        ${d}s
-        <span class="decade-badge">${ps.length} paper${ps.length > 1 ? 's' : ''}</span>
-      </div>`;
+    html += `<div class="decade-section" id="dec-${d}">
+      <div class="decade-label">${d}s <span class="decade-badge">${ps.length} paper${ps.length > 1 ? 's' : ''}</span></div>`;
     for (const p of ps) {
-      const vc      = venueClass(p.venue);
-      const insight = (p.insight || '')
-        .replace(/\*\*(.*?)\*\*/g, '<em>$1</em>');
+      const vc = venueClass(p.venue);
+      const confClass = p.confidence === 'high' ? 'high' : 'med';
+      const confLabel = p.confidence === 'high' ? 'Both sources' : 'One source';
       html += `<div class="paper-card">
         <div class="paper-top">
           <div class="paper-title">${esc(p.title)}<span class="paper-year">(${p.year})</span></div>
-          <span class="venue-pill ${vc}">${esc(p.venue)}</span>
+          <div class="paper-right">
+            ${data.sources_used && data.sources_used.includes('+')
+              ? `<span class="conf-pip ${confClass}">${confLabel}</span>`
+              : ''}
+            <span class="venue-pill ${vc}">${esc(p.venue)}</span>
+          </div>
         </div>
         <div class="paper-authors">${esc(p.authors || '')}</div>
-        <div class="paper-insight">${insight}</div>
+        <div class="paper-insight">${renderMd(p.insight)}</div>
       </div>`;
     }
     html += '</div>';
   }
 
-  /* Follow-up prompts */
-  const c = esc(data.concept || queriedConcept);
-  html += `<hr>
-  <div class="followup-row">
-    <button onclick="followUp('What are the open research problems in ${c} today?')">Open problems today →</button>
-    <button onclick="followUp('What are the most cited papers about ${c}?')">Most cited papers →</button>
-    <button onclick="followUp('How does ${c} relate to current AI/ML research?')">Connection to AI/ML →</button>
-    <button onclick="followUp('Give me a recommended reading order to understand ${c} deeply')">Reading order →</button>
+  // Follow-ups
+  html += `<hr><div class="followup-row">
+    <button onclick="askMore('What are the open research problems in ${concept} today?')">Open problems →</button>
+    <button onclick="askMore('Recommend a reading order to understand ${concept} deeply')">Reading order →</button>
+    <button onclick="askMore('How does ${concept} connect to AI and machine learning research?')">AI/ML connection →</button>
+    <button onclick="askMore('What are the most controversial ideas in ${concept}?')">Controversies →</button>
   </div>`;
 
-  document.getElementById('mainContent').innerHTML = html;
+  main.innerHTML = html;
 }
 
-function scrollTo(id) {
+function scrollToId(id) {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function followUp(q) {
+function askMore(q) {
   document.getElementById('conceptInput').value = q;
   document.getElementById('conceptInput').focus();
-}
-
-function showError(msg) {
-  document.getElementById('mainContent').innerHTML =
-    `<div class="error-box"><strong>Error</strong>${esc(msg)}</div>`;
-  document.getElementById('searchBtn').disabled = false;
-}
-
-function esc(s) {
-  return String(s || '')
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 renderTags();
