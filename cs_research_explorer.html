@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CS Research Concept Explorer</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f3;
+    --bg-tertiary: #eeece8;
+    --text-primary: #1a1a18;
+    --text-secondary: #6b6b66;
+    --text-tertiary: #9c9c97;
+    --border-light: rgba(0,0,0,0.10);
+    --border-mid: rgba(0,0,0,0.18);
+    --border-strong: rgba(0,0,0,0.28);
+    --accent: #534AB7;
+    --accent-bg: #EEEDFE;
+    --accent-border: #AFA9EC;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1c1c1a;
+      --bg-secondary: #252523;
+      --bg-tertiary: #2e2e2b;
+      --text-primary: #f0ede8;
+      --text-secondary: #9c9c97;
+      --text-tertiary: #6b6b66;
+      --border-light: rgba(255,255,255,0.08);
+      --border-mid: rgba(255,255,255,0.14);
+      --border-strong: rgba(255,255,255,0.22);
+      --accent: #8b84d7;
+      --accent-bg: #26215C;
+      --accent-border: #534AB7;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    line-height: 1.6;
+  }
+
+  .app {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .header { margin-bottom: 2rem; }
+  .header h1 {
+    font-size: 24px; font-weight: 600; letter-spacing: -0.4px;
+    margin-bottom: 6px;
+  }
+  .header p { font-size: 14px; color: var(--text-secondary); max-width: 600px; }
+
+  /* ── Search Controls ── */
+  .search-card {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .search-row {
+    display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .search-row input {
+    flex: 1; min-width: 200px;
+    font-size: 14px; padding: 9px 14px;
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-row input:focus { border-color: var(--accent); }
+  .search-row select {
+    font-size: 14px; padding: 9px 12px;
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    outline: none; cursor: pointer;
+    min-width: 160px;
+  }
+  .search-row button {
+    font-size: 14px; padding: 9px 20px;
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-md);
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 500;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+  .search-row button:hover { opacity: 0.88; }
+  .search-row button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── API Key input ── */
+  .apikey-row {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    padding-top: 10px;
+    border-top: 0.5px solid var(--border-light);
+  }
+  .apikey-row label { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+  .apikey-row input {
+    flex: 1; min-width: 240px; font-size: 13px;
+    padding: 7px 12px; font-family: monospace;
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    outline: none;
+  }
+  .apikey-note { font-size: 11px; color: var(--text-tertiary); }
+
+  /* ── Suggestion Tags ── */
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; align-items: center; }
+  .tags-label { font-size: 12px; color: var(--text-secondary); }
+  .tag {
+    font-size: 12px; padding: 5px 12px;
+    border-radius: 999px;
+    border: 0.5px solid var(--border-mid);
+    color: var(--text-secondary);
+    cursor: pointer;
+    background: var(--bg-primary);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .tag:hover { background: var(--bg-secondary); color: var(--text-primary); }
+  .tag.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+
+  /* ── Status ── */
+  .status {
+    font-size: 13px; color: var(--text-secondary);
+    margin-bottom: 1.25rem; min-height: 22px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #1D9E75; flex-shrink: 0;
+    animation: pulse 1.2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ── Evolution Summary ── */
+  .evolution-box {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.75rem;
+  }
+  .evolution-box h3 {
+    font-size: 13px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+  .evolution-text { font-size: 14px; line-height: 1.75; }
+  .evolution-text strong { font-weight: 600; color: var(--accent); }
+
+  /* ── Timeline Bar ── */
+  .timeline-bar {
+    display: flex; gap: 0; margin-bottom: 1.75rem;
+    border-radius: var(--radius-md); overflow: hidden;
+    border: 0.5px solid var(--border-mid);
+    background: var(--bg-primary);
+  }
+  .tbar-seg {
+    flex: 1; padding: 10px 6px; text-align: center;
+    font-size: 12px; cursor: pointer;
+    border-right: 0.5px solid var(--border-light);
+    color: var(--text-secondary);
+    transition: background 0.15s;
+  }
+  .tbar-seg:last-child { border-right: none; }
+  .tbar-seg:hover { background: var(--bg-secondary); }
+  .tbar-seg.has-papers { color: var(--text-primary); font-weight: 500; }
+  .tbar-seg .tbar-count {
+    display: block; font-size: 10px;
+    color: var(--text-secondary); font-weight: 400; margin-top: 2px;
+  }
+  .tbar-seg.active { background: var(--accent-bg); color: var(--accent); }
+  .tbar-seg.active .tbar-count { color: var(--accent); opacity: 0.75; }
+
+  /* ── Decade Section ── */
+  .decade-section { margin-bottom: 2rem; }
+  .decade-label {
+    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+    letter-spacing: 0.5px; text-transform: uppercase;
+    margin-bottom: 0.75rem; padding-bottom: 8px;
+    border-bottom: 0.5px solid var(--border-light);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .decade-badge {
+    font-size: 11px; background: var(--bg-secondary);
+    padding: 2px 8px; border-radius: 999px;
+    border: 0.5px solid var(--border-light);
+    text-transform: none; letter-spacing: 0;
+    color: var(--text-secondary); font-weight: 400;
+  }
+
+  /* ── Paper Card ── */
+  .paper-card {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 10px;
+    transition: border-color 0.15s;
+  }
+  .paper-card:hover { border-color: var(--border-mid); }
+  .paper-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 12px; margin-bottom: 6px;
+  }
+  .paper-title { font-size: 14px; font-weight: 500; line-height: 1.5; flex: 1; }
+  .paper-year { font-size: 12px; color: var(--text-secondary); font-weight: 400; margin-left: 4px; }
+  .venue-pill {
+    font-size: 11px; padding: 3px 9px;
+    border-radius: 999px; white-space: nowrap; flex-shrink: 0;
+    font-weight: 500;
+  }
+  /* Venue color classes */
+  .v-pldi  { background:#E6F1FB; color:#0C447C; }
+  .v-popl  { background:#EEEDFE; color:#3C3489; }
+  .v-sosp  { background:#E1F5EE; color:#085041; }
+  .v-osdi  { background:#FAECE7; color:#712B13; }
+  .v-lics  { background:#FAEEDA; color:#633806; }
+  .v-cav   { background:#EAF3DE; color:#27500A; }
+  .v-fm    { background:#FBEAF0; color:#72243E; }
+  .v-stoc  { background:#FCEBEB; color:#791F1F; }
+  .v-icfp  { background:#E6F1FB; color:#185FA5; }
+  .v-tacas { background:#FAEEDA; color:#854F0B; }
+  .v-other { background:#f1efe8; color:#5F5E5A; }
+
+  .paper-authors { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+  .paper-insight { font-size: 13px; line-height: 1.65; }
+  .paper-insight em { color: var(--accent); font-style: normal; font-weight: 500; }
+
+  /* ── Follow-up actions ── */
+  .followup-row {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    padding: 1.25rem 0 0.5rem;
+    border-top: 0.5px solid var(--border-light);
+    margin-top: 0.5rem;
+  }
+  .followup-row button {
+    font-size: 13px; padding: 8px 16px;
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .followup-row button:hover { background: var(--bg-secondary); }
+
+  /* ── Loading ── */
+  .loading-overlay { text-align: center; padding: 3rem 0; }
+  .spinner {
+    width: 32px; height: 32px;
+    border: 2px solid var(--border-mid);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 14px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-overlay p { font-size: 14px; color: var(--text-secondary); }
+
+  /* ── Empty / Error ── */
+  .empty { text-align: center; padding: 3rem 0; color: var(--text-secondary); font-size: 14px; }
+  .error-box {
+    background: #FCEBEB; border: 0.5px solid #F09595;
+    border-radius: var(--radius-lg); padding: 1rem 1.25rem;
+    font-size: 13px; color: #791F1F;
+  }
+  .error-box strong { display: block; margin-bottom: 4px; font-weight: 600; }
+
+  hr { border: none; border-top: 0.5px solid var(--border-light); margin: 2rem 0; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 99px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <h1>CS Research Concept Explorer</h1>
+    <p>Search any concept and see how it evolved across decades in A* venues — PLDI, POPL, SOSP, CAV, LICS, and more.</p>
+  </div>
+
+  <div class="search-card">
+    <div class="search-row">
+      <input type="text" id="conceptInput"
+        placeholder="e.g. type inference, consensus algorithms, model checking..."
+        onkeydown="if(event.key==='Enter') runSearch()" />
+      <select id="areaSelect">
+        <option value="all">All areas</option>
+        <option value="pl">Programming Languages</option>
+        <option value="ds">Distributed Systems</option>
+        <option value="fm">Formal Methods</option>
+        <option value="auto">Automata / Theory</option>
+      </select>
+      <button id="searchBtn" onclick="runSearch()">Explore →</button>
+    </div>
+
+    <div class="apikey-row">
+      <label for="apiKeyInput">Anthropic API key:</label>
+      <input type="password" id="apiKeyInput"
+        placeholder="sk-ant-..." autocomplete="off" />
+      <span class="apikey-note">Key stays local — never sent anywhere except api.anthropic.com</span>
+    </div>
+  </div>
+
+  <div class="tags" id="tagRow">
+    <span class="tags-label">Try:</span>
+  </div>
+
+  <div id="mainContent"></div>
+
+</div>
+
+<script>
+const SUGGESTIONS = [
+  "type inference", "garbage collection", "consensus algorithms",
+  "model checking", "linear types", "distributed transactions",
+  "program verification", "monads", "memory models", "theorem proving",
+  "dependent types", "Byzantine fault tolerance", "session types",
+  "abstract interpretation", "Paxos", "software transactional memory"
+];
+
+const AREA_DESCS = {
+  all: 'programming languages (PLDI, POPL, ICFP, OOPSLA, ESOP), distributed systems (SOSP, OSDI, EuroSys, ASPLOS, USENIX ATC), formal methods (CAV, TACAS, FM, FMSD), and automata/theory (LICS, STOC, FOCS, CONCUR)',
+  pl:  'programming languages venues: PLDI, POPL, ICFP, OOPSLA, ESOP',
+  ds:  'distributed systems venues: SOSP, OSDI, EuroSys, ASPLOS, USENIX ATC',
+  fm:  'formal methods venues: CAV, TACAS, FM, FMSD, ATVA',
+  auto:'automata and theory venues: LICS, STOC, FOCS, CONCUR, ICALP'
+};
+
+const VENUE_CLASSES = {
+  PLDI:'v-pldi', OOPSLA:'v-pldi', ESOP:'v-popl',
+  POPL:'v-popl',
+  SOSP:'v-sosp', EUROSYS:'v-sosp', ASPLOS:'v-sosp', 'USENIX ATC':'v-sosp',
+  OSDI:'v-osdi',
+  LICS:'v-lics', CONCUR:'v-lics',
+  CAV:'v-cav',
+  FM:'v-fm', FMSD:'v-fm',
+  STOC:'v-stoc', FOCS:'v-stoc',
+  ICFP:'v-icfp',
+  TACAS:'v-tacas', ATVA:'v-tacas'
+};
+
+function venueClass(v) {
+  const u = (v || '').toUpperCase();
+  for (const k in VENUE_CLASSES) {
+    if (u.includes(k)) return VENUE_CLASSES[k];
+  }
+  return 'v-other';
+}
+
+function renderTags() {
+  const row = document.getElementById('tagRow');
+  SUGGESTIONS.forEach(s => {
+    const t = document.createElement('span');
+    t.className = 'tag';
+    t.textContent = s;
+    t.onclick = () => {
+      document.getElementById('conceptInput').value = s;
+      runSearch();
+    };
+    row.appendChild(t);
+  });
+}
+
+let currentAbort = null;
+
+async function runSearch() {
+  const concept = document.getElementById('conceptInput').value.trim();
+  const area    = document.getElementById('areaSelect').value;
+  const apiKey  = document.getElementById('apiKeyInput').value.trim();
+
+  if (!concept) {
+    document.getElementById('conceptInput').focus();
+    return;
+  }
+  if (!apiKey) {
+    document.getElementById('apiKeyInput').focus();
+    showError('Please enter your Anthropic API key above.');
+    return;
+  }
+
+  if (currentAbort) currentAbort.abort();
+  currentAbort = new AbortController();
+
+  document.querySelectorAll('.tag').forEach(t =>
+    t.classList.toggle('active', t.textContent === concept));
+  document.getElementById('searchBtn').disabled = true;
+
+  const main = document.getElementById('mainContent');
+  main.innerHTML = `<div class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Searching A* venues for "<strong>${esc(concept)}</strong>"…</p>
+  </div>`;
+
+  const prompt = `You are a computer science research expert with deep knowledge of the academic literature.
+
+The user wants to explore how the concept of "${concept}" evolved across decades in top A* CS venues (${AREA_DESCS[area]}).
+
+Your task:
+1. Identify 8–12 highly influential, REAL published papers from these venues that are about or directly contributed to "${concept}".
+2. Papers should span multiple decades where applicable (earliest relevant work through recent).
+3. For each paper include a 1-2 sentence insight describing its specific contribution to the evolution of "${concept}". Use **bold** around the single most important key phrase.
+4. Write a 3-4 sentence narrative about how "${concept}" evolved over time — from early ideas to mature/modern state.
+
+Only include papers you are confident actually exist and were published in those venues. Do not hallucinate papers.
+
+Respond ONLY with a valid JSON object — no markdown fences, no preamble, no trailing text. Exactly this schema:
+{
+  "concept": "string",
+  "evolution_summary": "string (3-4 sentences, may use **bold**)",
+  "papers": [
+    {
+      "title": "Full paper title",
+      "authors": "First Author, Second Author (et al. if >3)",
+      "year": 1985,
+      "venue": "POPL",
+      "insight": "1-2 sentences. Use **bold** for the key idea.",
+      "area": "pl | ds | fm | auto"
+    }
+  ]
+}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      signal: currentAbort.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 3000,
+        stream: true,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `HTTP ${resp.status}`);
+    }
+
+    main.innerHTML = `
+      <div class="status">
+        <span class="dot"></span>
+        Streaming papers from the archives…
+      </div>
+      <div id="streamBuf" style="font-size:12px;color:var(--text-tertiary);font-family:monospace;padding:4px 0;min-height:18px;max-height:50px;overflow:hidden;"></div>`;
+
+    const reader  = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer    = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      for (const line of chunk.split('\n')) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6);
+        if (data === '[DONE]') continue;
+        try {
+          const ev = JSON.parse(data);
+          if (ev.type === 'content_block_delta' && ev.delta?.text) {
+            buffer += ev.delta.text;
+            const el = document.getElementById('streamBuf');
+            if (el) el.textContent = buffer.slice(-140);
+          }
+        } catch {}
+      }
+    }
+
+    const clean = buffer.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim();
+    const data  = JSON.parse(clean);
+    renderResults(data, concept);
+
+  } catch (err) {
+    if (err.name === 'AbortError') return;
+    showError(err.message);
+  } finally {
+    document.getElementById('searchBtn').disabled = false;
+  }
+}
+
+function renderResults(data, queriedConcept) {
+  const papers = (data.papers || []).sort((a, b) => a.year - b.year);
+  if (!papers.length) {
+    document.getElementById('mainContent').innerHTML =
+      '<div class="empty">No papers found. Try a different concept or area.</div>';
+    return;
+  }
+
+  const byDecade = {};
+  for (const p of papers) {
+    const d = Math.floor(p.year / 10) * 10;
+    (byDecade[d] = byDecade[d] || []).push(p);
+  }
+  const decades = Object.keys(byDecade).sort((a, b) => a - b);
+
+  let html = '';
+
+  /* Evolution summary */
+  const summary = (data.evolution_summary || '')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  html += `<div class="evolution-box">
+    <h3>How "${esc(data.concept || queriedConcept)}" evolved</h3>
+    <div class="evolution-text">${summary}</div>
+  </div>`;
+
+  /* Timeline bar */
+  html += '<div class="timeline-bar">';
+  for (const d of decades) {
+    const n = byDecade[d].length;
+    html += `<div class="tbar-seg has-papers" onclick="scrollTo('decade-${d}')">
+      ${d}s<span class="tbar-count">${n} paper${n > 1 ? 's' : ''}</span>
+    </div>`;
+  }
+  html += '</div>';
+
+  /* Papers by decade */
+  for (const d of decades) {
+    const ps = byDecade[d];
+    html += `<div class="decade-section" id="decade-${d}">
+      <div class="decade-label">
+        ${d}s
+        <span class="decade-badge">${ps.length} paper${ps.length > 1 ? 's' : ''}</span>
+      </div>`;
+    for (const p of ps) {
+      const vc      = venueClass(p.venue);
+      const insight = (p.insight || '')
+        .replace(/\*\*(.*?)\*\*/g, '<em>$1</em>');
+      html += `<div class="paper-card">
+        <div class="paper-top">
+          <div class="paper-title">${esc(p.title)}<span class="paper-year">(${p.year})</span></div>
+          <span class="venue-pill ${vc}">${esc(p.venue)}</span>
+        </div>
+        <div class="paper-authors">${esc(p.authors || '')}</div>
+        <div class="paper-insight">${insight}</div>
+      </div>`;
+    }
+    html += '</div>';
+  }
+
+  /* Follow-up prompts */
+  const c = esc(data.concept || queriedConcept);
+  html += `<hr>
+  <div class="followup-row">
+    <button onclick="followUp('What are the open research problems in ${c} today?')">Open problems today →</button>
+    <button onclick="followUp('What are the most cited papers about ${c}?')">Most cited papers →</button>
+    <button onclick="followUp('How does ${c} relate to current AI/ML research?')">Connection to AI/ML →</button>
+    <button onclick="followUp('Give me a recommended reading order to understand ${c} deeply')">Reading order →</button>
+  </div>`;
+
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function followUp(q) {
+  document.getElementById('conceptInput').value = q;
+  document.getElementById('conceptInput').focus();
+}
+
+function showError(msg) {
+  document.getElementById('mainContent').innerHTML =
+    `<div class="error-box"><strong>Error</strong>${esc(msg)}</div>`;
+  document.getElementById('searchBtn').disabled = false;
+}
+
+function esc(s) {
+  return String(s || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+renderTags();
+</script>
+</body>
+</html>
