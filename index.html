@@ -749,12 +749,12 @@ function renderResults(data, videos, concept) {
       const confClass = p.sourceCount > 1 ? 'high' : 'med';
       const confLabel = multiSource ? (p.sourceCount + ' of ' + totalSrcs + ' sources') : (p.sources ? p.sources[0] : '');
       const hasUrl = p.url && p.url !== 'null' && p.url !== 'undefined';
-      const titleHtml = hasUrl
-        ? '<a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a>'
-        : esc(p.title);
-      const linkHtml = hasUrl
-        ? ' <a href="' + esc(p.url) + '" target="_blank" rel="noopener" class="paper-link">↗ link</a>'
-        : '';
+      const paperLink = hasUrl
+        ? p.url
+        : 'https://scholar.google.com/scholar?q=' + encodeURIComponent(p.title + ' ' + (p.authors ? p.authors.split(',')[0] : ''));
+      const titleHtml = '<a href="' + esc(paperLink) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a>';
+      const linkLabel = hasUrl ? '↗ link' : '↗ search';
+      const linkHtml  = ' <a href="' + esc(paperLink) + '" target="_blank" rel="noopener" class="paper-link">' + linkLabel + '</a>';
       const ssHtml = p.ssVerified
         ? '<span class="ss-badge verified" title="Found on Semantic Scholar">✓ verified</span>' +
           (p.ssCitations !== null ? '<span class="ss-citations">' + p.ssCitations.toLocaleString() + ' citations</span>' : '')
