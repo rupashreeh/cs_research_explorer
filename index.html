@@ -220,6 +220,19 @@ body {
 }
 .error-box strong { display: block; margin-bottom: 4px; font-weight: 600; }
 hr { border: none; border-top: 0.5px solid var(--border-light); margin: 2rem 0; }
+
+.stats-bar {
+  background: var(--bg-primary); border: 0.5px solid var(--border-mid);
+  border-radius: var(--radius-lg); padding: 1rem 1.5rem; margin-bottom: 1.75rem;
+  display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+}
+.stat-item { text-align: center; padding: 0 1.25rem; }
+.stat-item:first-child { padding-left: 0; }
+.stat-n { display: block; font-size: 26px; font-weight: 600; line-height: 1.1; }
+.stat-n.agreed { color: #085041; }
+.stat-label { font-size: 11px; color: var(--text-secondary); }
+.stat-divider { width: 0.5px; height: 36px; background: var(--border-mid); flex-shrink: 0; }
+.stat-note { font-size: 11px; color: var(--text-tertiary); width: 100%; margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border-light); }
 </style>
 </head>
 <body>
@@ -227,7 +240,8 @@ hr { border: none; border-top: 0.5px solid var(--border-light); margin: 2rem 0; 
 
   <div class="header">
     <h1>CS Research Concept Explorer</h1>
-   </div>
+    <p>A problem I've always run into when reading research papers is that they rarely tell you <em>why</em> someone made a particular decision, or where the idea even came from. You're handed a fully-formed solution with citations, but the intellectual journey — the tough parts, the dead ends, the incremental refinements, the moment someone realized the old approach was fundamentally broken — is invisible. This tool tries to surface that history. You type in a concept like "type inference" or "consensus algorithms" and it searches across decades of papers from the top academic venues in programming languages, distributed systems, formal methods, and automata theory. Rather than just querying one AI, it runs Claude, Gemini, and Groq in parallel — since each model has different recall and different blind spots — then synthesizes all results into a single coherent timeline. What you get back is a narrative explaining how the idea evolved, and a chronological set of papers with a short explanation of what each one actually contributed to that evolution, not just what it did. The goal is to give you the intellectual context that papers themselves never provide: why this idea exists, what problem it was solving, and how it got from a rough first attempt to the refined form you're reading today.</p>
+  </div>
 
   <div class="search-card">
     <div class="search-row">
@@ -347,12 +361,35 @@ Find 8-12 highly influential, REAL published papers about "${concept}" from top 
 Papers should span multiple decades. For each, write a 1-2 sentence insight about its contribution. Use **bold** for the single most important phrase.
 Only include papers you are certain actually exist. Do not hallucinate.
 
+For the URL field: provide the most likely stable URL for the paper — ACM DL (dl.acm.org), IEEE Xplore, USENIX, arXiv, or the author's homepage. If you are not confident of the exact URL, omit it (leave as null).
+
 Respond ONLY with valid JSON, no markdown fences, no preamble:
 {
   "papers": [
-    { "title": "string", "authors": "string", "year": 1985, "venue": "POPL", "insight": "string" }
+    { "title": "string", "authors": "string", "year": 1985, "venue": "POPL", "insight": "string", "url": "https://... or null" }
   ]
 }`;
+}
+
+function videosPrompt(concept) {
+  return `You are a computer science education expert.
+
+List 4-6 high-quality, REAL video tutorials, lecture series, or conference talks about "${concept}" that are freely available online (YouTube, conference recordings, university lectures, etc).
+Only include videos you are confident actually exist.
+
+Respond ONLY with valid JSON, no markdown fences:
+{
+  "videos": [
+    {
+      "title": "string",
+      "speaker": "string (name and affiliation if known)",
+      "url": "https://...",
+      "description": "1 sentence about what this covers",
+      "type": "lecture | conference talk | tutorial | course"
+    }
+  ]
+}`;
+}
 }
 
 function synthesisPrompt(concept, allResults) {
@@ -482,52 +519,32 @@ async function runSearch() {
   document.querySelectorAll('.tag').forEach(t => t.classList.toggle('active', t.textContent === concept));
   document.getElementById('searchBtn').disabled = true;
 
-  const steps = activeSrcs.map(id => ({
-    id, label: SOURCES[id].label, detail: 'Searching A* venues…'
-  }));
-  const needsSynth = activeSrcs.length > 1;
-  if (needsSynth) steps.push({ id: 'synth', label: 'Synthesis', detail: 'Waiting for all sources…' });
+  const steps = activeSrcs.map(id => ({ id, label: SOURCES[id].label, detail: 'Searching A* venues…' }));
+  steps.push({ id: 'videos', label: 'Videos', detail: 'Finding tutorials & talks…' });
   showPipeline(steps);
-
-  // Mark gather steps as running
   activeSrcs.forEach(id => setStep(id, 'running', 'Searching A* venues…'));
+  setStep('videos', 'running', 'Finding tutorials & talks…');
 
   try {
     const gather = gatherPrompt(concept, area);
 
-    const settled = await Promise.all(
-      activeSrcs.map(id =>
-        callSource(id, gather, signal)
-          .then(r  => { setStep(id, 'done',  `Found ${r.papers?.length || 0} papers`); return { id, label: SOURCES[id].label, papers: r.papers || [] }; })
-          .catch(e => { setStep(id, 'error', e.message); return { id, label: SOURCES[id].label, papers: [] }; })
-      )
-    );
+    const [settled, videosResult] = await Promise.all([
+      Promise.all(
+        activeSrcs.map(id =>
+          callSource(id, gather, signal)
+            .then(r  => { setStep(id, 'done', `Found ${r.papers?.length || 0} papers`); return { id, label: SOURCES[id].label, papers: r.papers || [] }; })
+            .catch(e => { setStep(id, 'error', e.message); return { id, label: SOURCES[id].label, papers: [] }; })
+        )
+      ),
+      callClaude(videosPrompt(concept), signal)
+        .then(r  => { setStep('videos', 'done', `Found ${r.videos?.length || 0} resources`); return r; })
+        .catch(() => { setStep('videos', 'error', 'Could not load videos'); return { videos: [] }; })
+    ]);
 
     const withPapers = settled.filter(r => r.papers.length > 0);
     if (!withPapers.length) throw new Error('No papers found from any source. Check your Cloudflare Worker secrets.');
 
-    let finalData;
-
-    if (withPapers.length > 1) {
-      setStep('synth', 'running', 'Merging and synthesizing…');
-      finalData = await callClaude(synthesisPrompt(concept, withPapers), signal);
-      setStep('synth', 'done', `Synthesized ${finalData.papers?.length || 0} papers from ${finalData.total_candidates} candidates`);
-    } else {
-      // Single source — get Claude to write narrative
-      const src = withPapers[0];
-      const narrativeResult = await callClaude(
-        `Write a 4-5 sentence narrative about how "${concept}" evolved in CS research, from its origins to the modern day. Use **bold** for key terms. Respond ONLY with {"evolution_summary": "..."}`,
-        signal
-      );
-      finalData = {
-        concept,
-        evolution_summary: narrativeResult.evolution_summary || '',
-        sources_used: src.label,
-        papers: src.papers.map(p => ({ ...p, confidence: 'medium' }))
-      };
-    }
-
-    renderResults(finalData, concept);
+    renderResults(mergeResults(withPapers, concept), videosResult.videos || [], concept);
 
   } catch (err) {
     if (err.name === 'AbortError') return;
@@ -538,31 +555,74 @@ async function runSearch() {
   }
 }
 
+function normTitle(t) {
+  return (t||'').toLowerCase().replace(/[^a-z0-9]/g,' ').replace(/\s+/g,' ').trim();
+}
+
+function mergeResults(settled, concept) {
+  const map = new Map();
+  for (const { label, papers } of settled) {
+    for (const p of papers) {
+      const key = normTitle(p.title);
+      if (!map.has(key)) {
+        map.set(key, { ...p, sources: [label], sourceCount: 1 });
+      } else {
+        const ex = map.get(key);
+        if (!ex.sources.includes(label)) {
+          ex.sources.push(label);
+          ex.sourceCount++;
+          if ((p.insight||'').length > (ex.insight||'').length) ex.insight = p.insight;
+          if (!ex.url && p.url) ex.url = p.url;
+        }
+      }
+    }
+  }
+  const totalSources = settled.length;
+  const papers = [...map.values()].map(p => ({
+    ...p,
+    confidence: p.sourceCount === totalSources && totalSources > 1 ? 'all'
+              : p.sourceCount > 1 ? 'high' : 'medium'
+  })).sort((a, b) => b.sourceCount - a.sourceCount || a.year - b.year);
+
+  return {
+    concept,
+    sources_used: settled.map(s => s.label).join(' + '),
+    total_candidates: settled.reduce((n, s) => n + s.papers.length, 0),
+    papers
+  };
+}
+
 // ── Render ────────────────────────────────────────────────────────────────
 
-function renderResults(data, concept) {
-  const papers = (data.papers || []).sort((a, b) => a.year - b.year);
+function renderResults(data, videos, concept) {
+  const allPapers   = data.papers || [];
+  const multiSource = (data.sources_used || '').includes('+');
+  const totalSources = (data.sources_used || '').split('+').length;
+
   const byDecade = {};
-  for (const p of papers) {
+  for (const p of allPapers) {
     const d = Math.floor(p.year / 10) * 10;
     (byDecade[d] = byDecade[d] || []).push(p);
   }
   const decades = Object.keys(byDecade).sort((a, b) => a - b);
-  const multiSource = (data.sources_used || '').includes('+');
 
   let html = '';
 
-  const narrative = (data.evolution_summary || '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  const note = data.total_candidates
-    ? `Synthesized from ${data.total_candidates} candidates via ${data.sources_used}.`
-    : `Source: ${data.sources_used || 'Claude'}.`;
+  // Stats bar
+  if (multiSource) {
+    const agreed = allPapers.filter(p => p.sourceCount > 1).length;
+    const unique  = allPapers.filter(p => p.sourceCount === 1).length;
+    html += `<div class="stats-bar">
+      <div class="stat-item"><span class="stat-n">${allPapers.length}</span><span class="stat-label">total papers</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><span class="stat-n agreed">${agreed}</span><span class="stat-label">found by multiple sources</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat-item"><span class="stat-n">${unique}</span><span class="stat-label">found by one source only</span></div>
+      <div class="stat-note">${esc(data.sources_used)} · ${data.total_candidates} candidates before deduplication</div>
+    </div>`;
+  }
 
-  html += `<div class="narrative-box">
-    <h3>How "${esc(data.concept || concept)}" evolved</h3>
-    <div class="narrative-text">${narrative}</div>
-    <div class="sources-badge"><span class="dot"></span>${esc(note)}</div>
-  </div>`;
-
+  // Timeline
   html += '<div class="timeline-bar">';
   for (const d of decades) {
     const n = byDecade[d].length;
@@ -570,27 +630,57 @@ function renderResults(data, concept) {
   }
   html += '</div>';
 
+  // Papers by decade
   for (const d of decades) {
     const ps = byDecade[d];
     html += `<div class="decade-section" id="dec-${d}">
       <div class="decade-label">${d}s <span class="decade-badge">${ps.length} paper${ps.length>1?'s':''}</span></div>`;
     for (const p of ps) {
-      const vc = venueClass(p.venue);
-      const confClass = p.confidence === 'high' ? 'high' : 'med';
-      const confLabel = p.confidence === 'high' ? 'Multiple sources' : 'One source';
+      const vc        = venueClass(p.venue);
+      const confClass = p.sourceCount > 1 ? 'high' : 'med';
+      const confLabel = multiSource ? `${p.sourceCount} of ${totalSources} sources` : (p.sources?.[0] || '');
+      const titleHtml = p.url
+        ? `<a href="${esc(p.url)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px">${esc(p.title)}</a>`
+        : esc(p.title);
       html += `<div class="paper-card">
         <div class="paper-top">
-          <div class="paper-title">${esc(p.title)}<span class="paper-year">(${p.year})</span></div>
+          <div class="paper-title">${titleHtml}<span class="paper-year">(${p.year})</span></div>
           <div class="paper-right">
             ${multiSource ? `<span class="conf-pip ${confClass}">${confLabel}</span>` : ''}
             <span class="venue-pill ${vc}">${esc(p.venue)}</span>
           </div>
         </div>
-        <div class="paper-authors">${esc(p.authors||'')}</div>
+        <div class="paper-authors">${esc(p.authors||'')}${p.url ? ` <a href="${esc(p.url)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);margin-left:6px">↗ link</a>` : ''}</div>
         <div class="paper-insight">${renderMd(p.insight)}</div>
       </div>`;
     }
     html += '</div>';
+  }
+
+  // Videos section
+  if (videos && videos.length) {
+    html += `<div class="decade-label" style="margin-top:2rem;margin-bottom:12px">Video tutorials &amp; talks <span class="decade-badge">${videos.length}</span></div>`;
+    for (const v of videos) {
+      const typeColors = {
+        'lecture': 'v-popl', 'conference talk': 'v-sosp',
+        'tutorial': 'v-cav', 'course': 'v-icfp'
+      };
+      const tc = typeColors[v.type] || 'v-other';
+      html += `<div class="paper-card">
+        <div class="paper-top">
+          <div class="paper-title">
+            ${v.url
+              ? `<a href="${esc(v.url)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px">${esc(v.title)}</a>`
+              : esc(v.title)}
+          </div>
+          <div class="paper-right">
+            <span class="venue-pill ${tc}">${esc(v.type||'video')}</span>
+          </div>
+        </div>
+        <div class="paper-authors">${esc(v.speaker||'')}${v.url ? ` <a href="${esc(v.url)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);margin-left:6px">↗ watch</a>` : ''}</div>
+        <div class="paper-insight">${esc(v.description||'')}</div>
+      </div>`;
+    }
   }
 
   html += `<hr><div class="followup-row">
