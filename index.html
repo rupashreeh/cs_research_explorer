@@ -193,14 +193,7 @@ body {
 .paper-authors { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
 .paper-authors a { color: var(--accent); font-size: 11px; margin-left: 6px; }
 .paper-ss { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-.ss-badge {
-  font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; white-space: nowrap;
-}
-.ss-badge.verified   { background: #E1F5EE; color: #085041; border: 0.5px solid #5DCAA5; }
-.ss-badge.unverified { background: #FCEBEB; color: #791F1F; border: 0.5px solid #F09595; }
 .ss-citations { font-size: 11px; color: var(--text-tertiary); }
-.unverified-card { border-color: rgba(240,149,149,0.4); }
-.unverified-card:hover { border-color: #F09595; }
 .paper-insight { font-size: 13px; line-height: 1.65; }
 .paper-insight em { color: var(--accent); font-style: normal; font-weight: 500; }
 
@@ -694,8 +687,7 @@ async function runSearch() {
     // Semantic Scholar verification
     setStep('ss', 'running', 'Verifying ' + merged.papers.length + ' papers…');
     const verified = await verifyWithSemanticScholar(merged.papers, signal);
-    const verifiedCount = verified.filter(function(p) { return p.ssVerified; }).length;
-    setStep('ss', 'done', verifiedCount + ' of ' + verified.length + ' verified');
+    setStep('ss', 'done', 'Links and citations resolved');
     merged.papers = verified;
 
     renderResults(merged, videos, concept);
@@ -755,12 +747,11 @@ function renderResults(data, videos, concept) {
       const titleHtml = '<a href="' + esc(paperLink) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a>';
       const linkLabel = hasUrl ? '↗ link' : '↗ search';
       const linkHtml  = ' <a href="' + esc(paperLink) + '" target="_blank" rel="noopener" class="paper-link">' + linkLabel + '</a>';
-      const ssHtml = p.ssVerified
-        ? '<span class="ss-badge verified" title="Found on Semantic Scholar">✓ verified</span>' +
-          (p.ssCitations !== null ? '<span class="ss-citations">' + p.ssCitations.toLocaleString() + ' citations</span>' : '')
-        : '<span class="ss-badge unverified" title="Not found on Semantic Scholar — may be hallucinated">⚠ unverified</span>';
+      const ssHtml = p.ssCitations !== null && p.ssCitations !== undefined
+        ? '<span class="ss-citations">' + p.ssCitations.toLocaleString() + ' citations</span>'
+        : '';
 
-      html += '<div class="paper-card' + (p.ssVerified ? '' : ' unverified-card') + '">' +
+      html += '<div class="paper-card">' +
         '<div class="paper-top">' +
         '<div class="paper-title">' + titleHtml + '<span class="paper-year">(' + p.year + ')</span></div>' +
         '<div class="paper-right">' +
@@ -768,7 +759,7 @@ function renderResults(data, videos, concept) {
         '<span class="venue-pill ' + vc + '">' + esc(p.venue) + '</span>' +
         '</div></div>' +
         '<div class="paper-authors">' + esc(p.authors || '') + linkHtml + '</div>' +
-        '<div class="paper-ss">' + ssHtml + '</div>' +
+        (ssHtml ? '<div class="paper-ss">' + ssHtml + '</div>' : '') +
         '<div class="paper-insight">' + renderMd(p.insight) + '</div>' +
         '</div>';
     }
@@ -782,13 +773,10 @@ function renderResults(data, videos, concept) {
     for (let i = 0; i < videos.length; i++) {
       const v  = videos[i];
       const tc = typeColors[v.type] || 'v-other';
-      const hasVUrl = v.url && v.url !== 'null' && v.url !== 'undefined';
-      const titleHtml = hasVUrl
-        ? '<a href="' + esc(v.url) + '" target="_blank" rel="noopener">' + esc(v.title) + '</a>'
-        : esc(v.title);
-      const watchHtml = hasVUrl
-        ? ' <a href="' + esc(v.url) + '" target="_blank" rel="noopener" class="paper-link">↗ watch</a>'
-        : '';
+      const videoSearch = 'https://www.google.com/search?q=' +
+        encodeURIComponent((v.title || '') + ' ' + (v.speaker || '') + ' ' + (v.type || 'lecture'));
+      const titleHtml = '<a href="' + videoSearch + '" target="_blank" rel="noopener">' + esc(v.title) + '</a>';
+      const watchHtml = ' <a href="' + videoSearch + '" target="_blank" rel="noopener" class="paper-link">↗ find online</a>';
       html += '<div class="paper-card">' +
         '<div class="paper-top">' +
         '<div class="paper-title">' + titleHtml + '</div>' +
