@@ -8,7 +8,7 @@ What you get back is a narrative explaining how the idea evolved, and a chronolo
 
 **In the next version**, I will try to generate more information on what is the single core research idea of each paper with an example, and also add the ability to search books. I believe it is important to understand a paper or concept intuitively before diving into the details.
 
-I still use AI engines to do this search and invoke their APIs so you must proof check the results for now — this is intended to be a starter. Over time, I will ensure the results are more or less accurate.
+I still use AI engines to do this search and invoke their APIs and synthesize the narrative so you must proof check the results for now — this is intended to be a starter. Over time, I will add more checks and balances to ensure accuracy. 
 
 **Live site:** https://rupashreeh.github.io/cs_research_explorer/
 
