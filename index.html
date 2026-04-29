@@ -503,26 +503,37 @@ function mergeResults(settled, concept) {
 // ── Semantic Scholar verification ─────────────────────────────────────────
 
 async function lookupPaper(paper, signal) {
-  // Search by title — SS fuzzy matches well
   const query = encodeURIComponent(paper.title);
   const url = 'https://api.semanticscholar.org/graph/v1/paper/search?query=' + query +
-    '&limit=3&fields=title,authors,year,venue,externalIds,citationCount,openAccessPdf,url';
+    '&limit=5&fields=title,authors,year,venue,externalIds,citationCount,openAccessPdf,paperId';
   try {
     const resp = await fetch(url, { signal: signal });
     if (!resp.ok) return null;
     const json = await resp.json();
     const results = json.data || [];
-    // Find best match: same title (fuzzy) and year within 1
+    if (!results.length) return null;
+
+    const normQ = normTitle(paper.title);
+
+    // Pass 1: exact normalised title match
     for (let i = 0; i < results.length; i++) {
-      const r = results[i];
-      const titleMatch = normTitle(r.title) === normTitle(paper.title);
-      const yearMatch  = Math.abs((r.year || 0) - (paper.year || 0)) <= 1;
-      if (titleMatch && yearMatch) return r;
+      if (normTitle(results[i].title) === normQ) return results[i];
     }
-    // Looser match: just title similarity
-    if (results.length > 0 && normTitle(results[0].title) === normTitle(paper.title)) {
-      return results[0];
+
+    // Pass 2: one contains the other (handles subtitle truncation)
+    for (let i = 0; i < results.length; i++) {
+      const normR = normTitle(results[i].title);
+      if (normR.includes(normQ) || normQ.includes(normR)) return results[i];
     }
+
+    // Pass 3: word overlap >= 80% of query words
+    const qWords = normQ.split(' ').filter(function(w) { return w.length > 2; });
+    for (let i = 0; i < results.length; i++) {
+      const normR = normTitle(results[i].title);
+      const matches = qWords.filter(function(w) { return normR.indexOf(w) !== -1; }).length;
+      if (qWords.length > 0 && matches / qWords.length >= 0.8) return results[i];
+    }
+
     return null;
   } catch(e) {
     return null;
@@ -709,10 +720,11 @@ function renderResults(data, videos, concept) {
       const vc = venueClass(p.venue);
       const confClass = p.sourceCount > 1 ? 'high' : 'med';
       const confLabel = multiSource ? (p.sourceCount + ' of ' + totalSrcs + ' sources') : (p.sources ? p.sources[0] : '');
-      const titleHtml = p.url
+      const hasUrl = p.url && p.url !== 'null' && p.url !== 'undefined';
+      const titleHtml = hasUrl
         ? '<a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a>'
         : esc(p.title);
-      const linkHtml = p.url
+      const linkHtml = hasUrl
         ? ' <a href="' + esc(p.url) + '" target="_blank" rel="noopener" class="paper-link">↗ link</a>'
         : '';
       const ssHtml = p.ssVerified
@@ -742,10 +754,11 @@ function renderResults(data, videos, concept) {
     for (let i = 0; i < videos.length; i++) {
       const v  = videos[i];
       const tc = typeColors[v.type] || 'v-other';
-      const titleHtml = v.url
+      const hasVUrl = v.url && v.url !== 'null' && v.url !== 'undefined';
+      const titleHtml = hasVUrl
         ? '<a href="' + esc(v.url) + '" target="_blank" rel="noopener">' + esc(v.title) + '</a>'
         : esc(v.title);
-      const watchHtml = v.url
+      const watchHtml = hasVUrl
         ? ' <a href="' + esc(v.url) + '" target="_blank" rel="noopener" class="paper-link">↗ watch</a>'
         : '';
       html += '<div class="paper-card">' +
