@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,8 +42,8 @@ body {
 .app { max-width: 860px; margin: 0 auto; }
 
 .header { margin-bottom: 2rem; }
-.header h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 8px; }
-.header p { font-size: 14px; color: var(--text-secondary); max-width: 640px; line-height: 1.7; }
+.header h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 10px; }
+.header p { font-size: 14px; color: var(--text-secondary); max-width: 680px; line-height: 1.75; }
 
 .search-card {
   background: var(--bg-primary); border: 0.5px solid var(--border-mid);
@@ -65,23 +66,21 @@ body {
 .btn-primary:hover { opacity: 0.85; }
 .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* Sources grid */
 .sources-section { border-top: 0.5px solid var(--border-light); padding-top: 12px; }
 .sources-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 10px; }
 .sources-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
 .source-card {
   border: 0.5px solid var(--border-mid); border-radius: var(--radius-md);
   padding: 10px 12px; cursor: pointer; transition: all 0.15s;
-  display: flex; flex-direction: column; gap: 3px;
   background: var(--bg-secondary);
 }
 .source-card:hover { border-color: var(--accent); background: var(--bg-primary); }
 .source-card.active { border-color: var(--accent); background: var(--accent-bg); }
-.source-card-top { display: flex; align-items: center; gap: 8px; }
+.source-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
 .source-check {
   width: 15px; height: 15px; border-radius: 3px; border: 0.5px solid var(--border-mid);
-  background: var(--bg-primary); flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-  font-size: 10px; color: transparent; transition: all 0.15s;
+  background: var(--bg-primary); flex-shrink: 0; display: flex; align-items: center;
+  justify-content: center; font-size: 10px; color: transparent; transition: all 0.15s;
 }
 .source-card.active .source-check { background: var(--accent); border-color: var(--accent); color: #fff; }
 .source-name { font-size: 13px; font-weight: 500; }
@@ -98,7 +97,6 @@ body {
 .tag:hover { background: var(--bg-secondary); color: var(--text-primary); }
 .tag.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
 
-/* Pipeline */
 .pipeline {
   background: var(--bg-primary); border: 0.5px solid var(--border-mid);
   border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
@@ -122,25 +120,19 @@ body {
 .step-label strong { color: var(--text-primary); font-weight: 500; }
 .step-detail { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
 
-/* Narrative */
-.narrative-box {
+.stats-bar {
   background: var(--bg-primary); border: 0.5px solid var(--border-mid);
-  border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.75rem;
+  border-radius: var(--radius-lg); padding: 1rem 1.5rem; margin-bottom: 1.75rem;
+  display: flex; align-items: center; gap: 0; flex-wrap: wrap;
 }
-.narrative-box h3 {
-  font-size: 12px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 10px;
-}
-.narrative-text { font-size: 15px; line-height: 1.8; }
-.narrative-text strong { font-weight: 600; color: var(--accent); }
-.sources-badge {
-  display: inline-flex; align-items: center; gap: 6px; font-size: 11px;
-  padding: 3px 9px; border-radius: 999px; background: var(--bg-secondary);
-  border: 0.5px solid var(--border-mid); color: var(--text-secondary); margin-top: 12px;
-}
-.sources-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; }
+.stat-item { text-align: center; padding: 0 1.25rem; }
+.stat-item:first-child { padding-left: 0; }
+.stat-n { display: block; font-size: 26px; font-weight: 600; line-height: 1.1; }
+.stat-n.agreed { color: #085041; }
+.stat-label { font-size: 11px; color: var(--text-secondary); }
+.stat-divider { width: 0.5px; height: 36px; background: var(--border-mid); flex-shrink: 0; }
+.stat-note { font-size: 11px; color: var(--text-tertiary); width: 100%; margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border-light); }
 
-/* Timeline bar */
 .timeline-bar {
   display: flex; margin-bottom: 1.75rem; border-radius: var(--radius-md);
   overflow: hidden; border: 0.5px solid var(--border-mid); background: var(--bg-primary);
@@ -155,7 +147,6 @@ body {
 .tbar-seg.has-data { color: var(--text-primary); font-weight: 500; }
 .tbar-seg .tbar-sub { display: block; font-size: 10px; color: var(--text-secondary); font-weight: 400; margin-top: 2px; }
 
-/* Decade */
 .decade-section { margin-bottom: 2rem; }
 .decade-label {
   font-size: 12px; font-weight: 600; color: var(--text-secondary);
@@ -170,7 +161,6 @@ body {
   color: var(--text-secondary); font-weight: 400; text-transform: none; letter-spacing: 0;
 }
 
-/* Paper card */
 .paper-card {
   background: var(--bg-primary); border: 0.5px solid var(--border-light);
   border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px;
@@ -179,6 +169,8 @@ body {
 .paper-card:hover { border-color: var(--border-mid); }
 .paper-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
 .paper-title { font-size: 14px; font-weight: 500; line-height: 1.5; flex: 1; }
+.paper-title a { color: inherit; text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--border-mid); }
+.paper-title a:hover { text-decoration-color: var(--accent); }
 .paper-year { font-size: 12px; color: var(--text-secondary); font-weight: 400; margin-left: 4px; }
 .paper-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
 .venue-pill { font-size: 11px; padding: 3px 9px; border-radius: 999px; white-space: nowrap; font-weight: 500; }
@@ -200,8 +192,17 @@ body {
 .conf-pip.high { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
 .conf-pip.med  { background: #FAEEDA; color: #633806; border-color: #EF9F27; }
 .paper-authors { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+.paper-authors a { color: var(--accent); font-size: 11px; margin-left: 6px; }
 .paper-insight { font-size: 13px; line-height: 1.65; }
 .paper-insight em { color: var(--accent); font-style: normal; font-weight: 500; }
+
+.video-section-label {
+  font-size: 12px; font-weight: 600; color: var(--text-secondary);
+  letter-spacing: 0.5px; text-transform: uppercase;
+  margin: 2rem 0 0.75rem; padding-bottom: 8px;
+  border-bottom: 0.5px solid var(--border-light);
+  display: flex; align-items: center; gap: 10px;
+}
 
 .followup-row {
   display: flex; gap: 10px; flex-wrap: wrap;
@@ -220,19 +221,6 @@ body {
 }
 .error-box strong { display: block; margin-bottom: 4px; font-weight: 600; }
 hr { border: none; border-top: 0.5px solid var(--border-light); margin: 2rem 0; }
-
-.stats-bar {
-  background: var(--bg-primary); border: 0.5px solid var(--border-mid);
-  border-radius: var(--radius-lg); padding: 1rem 1.5rem; margin-bottom: 1.75rem;
-  display: flex; align-items: center; gap: 0; flex-wrap: wrap;
-}
-.stat-item { text-align: center; padding: 0 1.25rem; }
-.stat-item:first-child { padding-left: 0; }
-.stat-n { display: block; font-size: 26px; font-weight: 600; line-height: 1.1; }
-.stat-n.agreed { color: #085041; }
-.stat-label { font-size: 11px; color: var(--text-secondary); }
-.stat-divider { width: 0.5px; height: 36px; background: var(--border-mid); flex-shrink: 0; }
-.stat-note { font-size: 11px; color: var(--text-tertiary); width: 100%; margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border-light); }
 </style>
 </head>
 <body>
@@ -240,6 +228,7 @@ hr { border: none; border-top: 0.5px solid var(--border-light); margin: 2rem 0; 
 
   <div class="header">
     <h1>CS Research Concept Explorer</h1>
+    <p>A problem I've always run into when reading research papers is that they rarely tell you <em>why</em> someone made a particular decision, or where the idea even came from. You're handed a fully-formed solution with citations, but the intellectual journey — the tough parts, the dead ends, the incremental refinements, the moment someone realized the old approach was fundamentally broken — is invisible. This tool tries to surface that history. You type in a concept like "type inference" or "consensus algorithms" and it searches across decades of papers from the top academic venues in programming languages, distributed systems, formal methods, and automata theory. Rather than just querying one AI, it runs Claude, Gemini, and Groq in parallel — since each model has different recall and different blind spots — then synthesizes all results into a single coherent timeline. What you get back is a narrative explaining how the idea evolved, and a chronological set of papers with a short explanation of what each one actually contributed to that evolution, not just what it did. The goal is to give you the intellectual context that papers themselves never provide: why this idea exists, what problem it was solving, and how it got from a rough first attempt to the refined form you're reading today.</p>
   </div>
 
   <div class="search-card">
@@ -256,7 +245,6 @@ hr { border: none; border-top: 0.5px solid var(--border-light); margin: 2rem 0; 
       </select>
       <button class="btn-primary" id="searchBtn" onclick="runSearch()">Explore →</button>
     </div>
-
     <div class="sources-section">
       <div class="sources-label">Sources — select one or more to search in parallel:</div>
       <div class="sources-grid">
@@ -293,19 +281,17 @@ hr { border: none; border-top: 0.5px solid var(--border-light); margin: 2rem 0; 
 const PROXY = 'https://cs-research-proxy.rrangaiyengar.workers.dev';
 
 const SOURCES = {
-  claude: { label: 'Claude',     type: 'claude' },
-  gemini: { label: 'Gemini',     type: 'openai-compat' },
-  groq:   { label: 'Groq/Llama', type: 'openai-compat' },
+  claude: { label: 'Claude'     },
+  gemini: { label: 'Gemini'     },
+  groq:   { label: 'Groq/Llama' }
 };
 
 const active = { claude: true, gemini: false, groq: true };
 
 function toggleSource(id) {
   active[id] = !active[id];
-  const card  = document.getElementById('card-' + id);
-  const check = document.getElementById('check-' + id);
-  card.classList.toggle('active', active[id]);
-  check.textContent = active[id] ? '✓' : '';
+  document.getElementById('card-' + id).classList.toggle('active', active[id]);
+  document.getElementById('check-' + id).textContent = active[id] ? '✓' : '';
 }
 
 const SUGGESTIONS = [
@@ -332,21 +318,33 @@ const VENUE_CLASSES = {
 };
 
 function venueClass(v) {
-  const u = (v||'').toUpperCase();
+  const u = (v || '').toUpperCase();
   for (const k in VENUE_CLASSES) if (u.includes(k)) return VENUE_CLASSES[k];
   return 'v-other';
 }
+
 function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function renderMd(s) { return (s||'').replace(/\*\*(.*?)\*\*/g,'<em>$1</em>'); }
+
+function renderMd(s) {
+  return (s || '').replace(/\*\*(.*?)\*\*/g, '<em>$1</em>');
+}
+
+function normTitle(t) {
+  return (t || '').toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
+}
 
 function renderTags() {
   const row = document.getElementById('tagRow');
-  SUGGESTIONS.forEach(s => {
+  SUGGESTIONS.forEach(function(s) {
     const t = document.createElement('span');
-    t.className = 'tag'; t.textContent = s;
-    t.onclick = () => { document.getElementById('conceptInput').value = s; runSearch(); };
+    t.className = 'tag';
+    t.textContent = s;
+    t.onclick = function() {
+      document.getElementById('conceptInput').value = s;
+      runSearch();
+    };
     row.appendChild(t);
   });
 }
@@ -354,72 +352,21 @@ function renderTags() {
 // ── Prompts ───────────────────────────────────────────────────────────────
 
 function gatherPrompt(concept, area) {
-  return `You are a computer science research expert.
-
-Find 8-12 highly influential, REAL published papers about "${concept}" from top A* CS venues (${AREA_DESCS[area]}).
-Papers should span multiple decades. For each, write a 1-2 sentence insight about its contribution. Use **bold** for the single most important phrase.
-Only include papers you are certain actually exist. Do not hallucinate.
-
-For the URL field: provide the most likely stable URL for the paper — ACM DL (dl.acm.org), IEEE Xplore, USENIX, arXiv, or the author's homepage. If you are not confident of the exact URL, omit it (leave as null).
-
-Respond ONLY with valid JSON, no markdown fences, no preamble:
-{
-  "papers": [
-    { "title": "string", "authors": "string", "year": 1985, "venue": "POPL", "insight": "string", "url": "https://... or null" }
-  ]
-}`;
+  return 'You are a computer science research expert.\n\n' +
+    'Find 8-12 highly influential, REAL published papers about "' + concept + '" from top A* CS venues (' + AREA_DESCS[area] + ').\n' +
+    'Papers should span multiple decades. For each, write a 1-2 sentence insight about its contribution. Use **bold** for the single most important phrase.\n' +
+    'Only include papers you are certain actually exist. Do not hallucinate.\n\n' +
+    'For the url field: provide the most likely stable URL (ACM DL, arXiv, USENIX, IEEE). If unsure, use null.\n\n' +
+    'Respond ONLY with valid JSON, no markdown fences:\n' +
+    '{"papers":[{"title":"string","authors":"string","year":1985,"venue":"POPL","insight":"string","url":"https://... or null"}]}';
 }
 
 function videosPrompt(concept) {
-  return `You are a computer science education expert.
-
-List 4-6 high-quality, REAL video tutorials, lecture series, or conference talks about "${concept}" that are freely available online (YouTube, conference recordings, university lectures, etc).
-Only include videos you are confident actually exist.
-
-Respond ONLY with valid JSON, no markdown fences:
-{
-  "videos": [
-    {
-      "title": "string",
-      "speaker": "string (name and affiliation if known)",
-      "url": "https://...",
-      "description": "1 sentence about what this covers",
-      "type": "lecture | conference talk | tutorial | course"
-    }
-  ]
-}`;
-}
-}
-
-function synthesisPrompt(concept, allResults) {
-  const sections = allResults.map(r =>
-    `=== ${r.label} (${r.papers.length} papers) ===\n${JSON.stringify(r.papers, null, 2)}`
-  ).join('\n\n');
-  const totalCandidates = allResults.reduce((n, r) => n + r.papers.length, 0);
-  const sourceNames = allResults.map(r => r.label).join(' + ');
-
-  return `You are a computer science research expert. Multiple AI models were asked to find influential papers about "${concept}" from top A* CS venues. Here are their results:
-
-${sections}
-
-Synthesize these into ONE high-quality unified response:
-1. Deduplicate — papers with the same or very similar titles should appear once. Papers found by multiple models have higher confidence.
-2. Discard anything that looks hallucinated or not genuinely important to "${concept}".
-3. Write a unified 4-5 sentence narrative about how "${concept}" evolved. Use **bold** for key terms.
-4. For each paper write a fresh synthesized insight (1-2 sentences). Use **bold** for the key idea.
-5. Add "confidence": "high" if multiple models found it, "medium" if only one did.
-6. Aim for 10-15 of the strongest papers, well-distributed across decades.
-
-Respond ONLY with valid JSON, no markdown fences:
-{
-  "concept": "string",
-  "evolution_summary": "string",
-  "sources_used": "${sourceNames}",
-  "total_candidates": ${totalCandidates},
-  "papers": [
-    { "title": "string", "authors": "string", "year": 1990, "venue": "POPL", "insight": "string", "confidence": "high | medium" }
-  ]
-}`;
+  return 'You are a computer science education expert.\n\n' +
+    'List 4-6 high-quality, REAL video tutorials, lecture series, or conference talks about "' + concept + '" freely available online.\n' +
+    'Only include videos you are confident actually exist.\n\n' +
+    'Respond ONLY with valid JSON, no markdown fences:\n' +
+    '{"videos":[{"title":"string","speaker":"string","url":"https://...","description":"1 sentence","type":"lecture|conference talk|tutorial|course"}]}';
 }
 
 // ── API calls ─────────────────────────────────────────────────────────────
@@ -431,6 +378,10 @@ function makeMessages(prompt) {
   ];
 }
 
+function parseJSON(raw) {
+  return JSON.parse(raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim());
+}
+
 async function callClaude(prompt, signal) {
   const resp = await fetch(PROXY, {
     method: 'POST', signal,
@@ -440,18 +391,29 @@ async function callClaude(prompt, signal) {
       messages: [{ role: 'user', content: prompt }]
     })
   });
-  if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error(e?.error?.message || `Claude HTTP ${resp.status}`); }
-  const reader = resp.body.getReader(), dec = new TextDecoder();
+  if (!resp.ok) {
+    const e = await resp.json().catch(function() { return {}; });
+    throw new Error(e.error ? e.error.message : 'Claude HTTP ' + resp.status);
+  }
+  const reader = resp.body.getReader();
+  const dec = new TextDecoder();
   let buf = '';
   while (true) {
-    const { done, value } = await reader.read(); if (done) break;
-    for (const line of dec.decode(value, { stream: true }).split('\n')) {
+    const chunk = await reader.read();
+    if (chunk.done) break;
+    const lines = dec.decode(chunk.value, { stream: true }).split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
       if (!line.startsWith('data: ')) continue;
-      const d = line.slice(6); if (d === '[DONE]') continue;
-      try { const ev = JSON.parse(d); if (ev.type === 'content_block_delta' && ev.delta?.text) buf += ev.delta.text; } catch {}
+      const d = line.slice(6);
+      if (d === '[DONE]') continue;
+      try {
+        const ev = JSON.parse(d);
+        if (ev.type === 'content_block_delta' && ev.delta && ev.delta.text) buf += ev.delta.text;
+      } catch(e) {}
     }
   }
-  return JSON.parse(buf.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim());
+  return parseJSON(buf);
 }
 
 async function callOpenAICompat(endpoint, prompt, signal) {
@@ -460,42 +422,82 @@ async function callOpenAICompat(endpoint, prompt, signal) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages: makeMessages(prompt), max_tokens: 3000, temperature: 0.2 })
   });
-  if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error(e?.error?.message || `HTTP ${resp.status}`); }
+  if (!resp.ok) {
+    const e = await resp.json().catch(function() { return {}; });
+    throw new Error(e.error ? e.error.message : 'HTTP ' + resp.status);
+  }
   const json = await resp.json();
-  const raw = json.choices?.[0]?.message?.content || '{}';
-  return JSON.parse(raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim());
+  const raw = (json.choices && json.choices[0] && json.choices[0].message) ? json.choices[0].message.content : '{}';
+  return parseJSON(raw);
 }
 
 function callSource(id, prompt, signal) {
-  if (id === 'claude')  return callClaude(prompt, signal);
-  if (id === 'gemini')  return callOpenAICompat(PROXY + '/gemini', prompt, signal);
-  if (id === 'groq')    return callOpenAICompat(PROXY + '/groq',   prompt, signal);
+  if (id === 'claude') return callClaude(prompt, signal);
+  if (id === 'gemini') return callOpenAICompat(PROXY + '/gemini', prompt, signal);
+  if (id === 'groq')   return callOpenAICompat(PROXY + '/groq',   prompt, signal);
   throw new Error('Unknown source: ' + id);
+}
+
+// ── Merge ─────────────────────────────────────────────────────────────────
+
+function mergeResults(settled, concept) {
+  const map = new Map();
+  for (let i = 0; i < settled.length; i++) {
+    const src = settled[i];
+    for (let j = 0; j < src.papers.length; j++) {
+      const p = src.papers[j];
+      const key = normTitle(p.title);
+      if (!map.has(key)) {
+        map.set(key, { title: p.title, authors: p.authors, year: p.year, venue: p.venue, insight: p.insight, url: p.url || null, sources: [src.label], sourceCount: 1 });
+      } else {
+        const ex = map.get(key);
+        if (ex.sources.indexOf(src.label) === -1) {
+          ex.sources.push(src.label);
+          ex.sourceCount++;
+          if ((p.insight || '').length > (ex.insight || '').length) ex.insight = p.insight;
+          if (!ex.url && p.url) ex.url = p.url;
+        }
+      }
+    }
+  }
+
+  const totalSources = settled.length;
+  const papers = [];
+  map.forEach(function(p) {
+    p.confidence = (p.sourceCount === totalSources && totalSources > 1) ? 'all' : (p.sourceCount > 1 ? 'high' : 'medium');
+    papers.push(p);
+  });
+  papers.sort(function(a, b) { return b.sourceCount - a.sourceCount || a.year - b.year; });
+
+  return {
+    concept: concept,
+    sources_used: settled.map(function(s) { return s.label; }).join(' + '),
+    total_candidates: settled.reduce(function(n, s) { return n + s.papers.length; }, 0),
+    papers: papers
+  };
 }
 
 // ── Pipeline UI ───────────────────────────────────────────────────────────
 
 function showPipeline(steps) {
-  document.getElementById('mainContent').innerHTML = `
-    <div class="pipeline">
-      <div class="pipeline-title">Building your answer</div>
-      <div class="pipeline-steps">
-        ${steps.map(s => `
-          <div class="pipeline-step">
-            <div class="step-icon pending" id="icon-${s.id}">…</div>
-            <div class="step-label">
-              <strong>${s.label}</strong>
-              <div class="step-detail" id="detail-${s.id}">${s.detail}</div>
-            </div>
-          </div>`).join('')}
-      </div>
-    </div>`;
+  let rows = '';
+  for (let i = 0; i < steps.length; i++) {
+    const s = steps[i];
+    rows += '<div class="pipeline-step">' +
+      '<div class="step-icon pending" id="icon-' + s.id + '">…</div>' +
+      '<div class="step-label"><strong>' + s.label + '</strong>' +
+      '<div class="step-detail" id="detail-' + s.id + '">' + s.detail + '</div></div>' +
+      '</div>';
+  }
+  document.getElementById('mainContent').innerHTML =
+    '<div class="pipeline"><div class="pipeline-title">Searching sources</div>' +
+    '<div class="pipeline-steps">' + rows + '</div></div>';
 }
 
 function setStep(id, state, detail) {
   const icon = document.getElementById('icon-' + id);
   const det  = document.getElementById('detail-' + id);
-  if (icon)  icon.className = `step-icon ${state}`;
+  if (icon) icon.className = 'step-icon ' + state;
   if (det && detail !== undefined) det.textContent = detail;
 }
 
@@ -504,9 +506,9 @@ function setStep(id, state, detail) {
 let currentAbort = null;
 
 async function runSearch() {
-  const concept     = document.getElementById('conceptInput').value.trim();
-  const area        = document.getElementById('areaSelect').value;
-  const activeSrcs  = Object.keys(active).filter(k => active[k]);
+  const concept    = document.getElementById('conceptInput').value.trim();
+  const area       = document.getElementById('areaSelect').value;
+  const activeSrcs = Object.keys(active).filter(function(k) { return active[k]; });
 
   if (!concept) { document.getElementById('conceptInput').focus(); return; }
   if (!activeSrcs.length) { alert('Select at least one source.'); return; }
@@ -515,177 +517,165 @@ async function runSearch() {
   currentAbort = new AbortController();
   const signal = currentAbort.signal;
 
-  document.querySelectorAll('.tag').forEach(t => t.classList.toggle('active', t.textContent === concept));
+  document.querySelectorAll('.tag').forEach(function(t) {
+    t.classList.toggle('active', t.textContent === concept);
+  });
   document.getElementById('searchBtn').disabled = true;
 
-  const steps = activeSrcs.map(id => ({ id, label: SOURCES[id].label, detail: 'Searching A* venues…' }));
+  const steps = activeSrcs.map(function(id) {
+    return { id: id, label: SOURCES[id].label, detail: 'Searching A* venues…' };
+  });
   steps.push({ id: 'videos', label: 'Videos', detail: 'Finding tutorials & talks…' });
   showPipeline(steps);
-  activeSrcs.forEach(id => setStep(id, 'running', 'Searching A* venues…'));
+  activeSrcs.forEach(function(id) { setStep(id, 'running', 'Searching A* venues…'); });
   setStep('videos', 'running', 'Finding tutorials & talks…');
 
   try {
     const gather = gatherPrompt(concept, area);
+    const vPrompt = videosPrompt(concept);
 
-    const [settled, videosResult] = await Promise.all([
-      Promise.all(
-        activeSrcs.map(id =>
-          callSource(id, gather, signal)
-            .then(r  => { setStep(id, 'done', `Found ${r.papers?.length || 0} papers`); return { id, label: SOURCES[id].label, papers: r.papers || [] }; })
-            .catch(e => { setStep(id, 'error', e.message); return { id, label: SOURCES[id].label, papers: [] }; })
-        )
-      ),
-      callClaude(videosPrompt(concept), signal)
-        .then(r  => { setStep('videos', 'done', `Found ${r.videos?.length || 0} resources`); return r; })
-        .catch(() => { setStep('videos', 'error', 'Could not load videos'); return { videos: [] }; })
-    ]);
+    const paperPromises = activeSrcs.map(function(id) {
+      return callSource(id, gather, signal)
+        .then(function(r) {
+          setStep(id, 'done', 'Found ' + (r.papers ? r.papers.length : 0) + ' papers');
+          return { id: id, label: SOURCES[id].label, papers: r.papers || [] };
+        })
+        .catch(function(e) {
+          setStep(id, 'error', e.message);
+          return { id: id, label: SOURCES[id].label, papers: [] };
+        });
+    });
 
-    const withPapers = settled.filter(r => r.papers.length > 0);
-    if (!withPapers.length) throw new Error('No papers found from any source. Check your Cloudflare Worker secrets.');
+    const videoPromise = callClaude(vPrompt, signal)
+      .then(function(r) {
+        setStep('videos', 'done', 'Found ' + (r.videos ? r.videos.length : 0) + ' resources');
+        return r.videos || [];
+      })
+      .catch(function() {
+        setStep('videos', 'error', 'Could not load videos');
+        return [];
+      });
 
-    renderResults(mergeResults(withPapers, concept), videosResult.videos || [], concept);
+    const allSettled = await Promise.all([Promise.all(paperPromises), videoPromise]);
+    const settled = allSettled[0];
+    const videos  = allSettled[1];
 
-  } catch (err) {
+    const withPapers = settled.filter(function(r) { return r.papers.length > 0; });
+    if (!withPapers.length) throw new Error('No papers found. Check your Cloudflare Worker secrets.');
+
+    renderResults(mergeResults(withPapers, concept), videos, concept);
+
+  } catch(err) {
     if (err.name === 'AbortError') return;
     document.getElementById('mainContent').innerHTML =
-      `<div class="error-box"><strong>Error</strong>${esc(err.message)}</div>`;
+      '<div class="error-box"><strong>Error</strong>' + esc(err.message) + '</div>';
   } finally {
     document.getElementById('searchBtn').disabled = false;
   }
 }
 
-function normTitle(t) {
-  return (t||'').toLowerCase().replace(/[^a-z0-9]/g,' ').replace(/\s+/g,' ').trim();
-}
-
-function mergeResults(settled, concept) {
-  const map = new Map();
-  for (const { label, papers } of settled) {
-    for (const p of papers) {
-      const key = normTitle(p.title);
-      if (!map.has(key)) {
-        map.set(key, { ...p, sources: [label], sourceCount: 1 });
-      } else {
-        const ex = map.get(key);
-        if (!ex.sources.includes(label)) {
-          ex.sources.push(label);
-          ex.sourceCount++;
-          if ((p.insight||'').length > (ex.insight||'').length) ex.insight = p.insight;
-          if (!ex.url && p.url) ex.url = p.url;
-        }
-      }
-    }
-  }
-  const totalSources = settled.length;
-  const papers = [...map.values()].map(p => ({
-    ...p,
-    confidence: p.sourceCount === totalSources && totalSources > 1 ? 'all'
-              : p.sourceCount > 1 ? 'high' : 'medium'
-  })).sort((a, b) => b.sourceCount - a.sourceCount || a.year - b.year);
-
-  return {
-    concept,
-    sources_used: settled.map(s => s.label).join(' + '),
-    total_candidates: settled.reduce((n, s) => n + s.papers.length, 0),
-    papers
-  };
-}
-
 // ── Render ────────────────────────────────────────────────────────────────
 
 function renderResults(data, videos, concept) {
-  const allPapers   = data.papers || [];
-  const multiSource = (data.sources_used || '').includes('+');
-  const totalSources = (data.sources_used || '').split('+').length;
+  const papers      = data.papers || [];
+  const multiSource = data.sources_used.indexOf('+') !== -1;
+  const totalSrcs   = data.sources_used.split('+').length;
 
   const byDecade = {};
-  for (const p of allPapers) {
+  for (let i = 0; i < papers.length; i++) {
+    const p = papers[i];
     const d = Math.floor(p.year / 10) * 10;
-    (byDecade[d] = byDecade[d] || []).push(p);
+    if (!byDecade[d]) byDecade[d] = [];
+    byDecade[d].push(p);
   }
-  const decades = Object.keys(byDecade).sort((a, b) => a - b);
+  const decades = Object.keys(byDecade).sort(function(a,b) { return a - b; });
 
   let html = '';
 
-  // Stats bar
+  // Stats bar (multi-source only)
   if (multiSource) {
-    const agreed = allPapers.filter(p => p.sourceCount > 1).length;
-    const unique  = allPapers.filter(p => p.sourceCount === 1).length;
-    html += `<div class="stats-bar">
-      <div class="stat-item"><span class="stat-n">${allPapers.length}</span><span class="stat-label">total papers</span></div>
-      <div class="stat-divider"></div>
-      <div class="stat-item"><span class="stat-n agreed">${agreed}</span><span class="stat-label">found by multiple sources</span></div>
-      <div class="stat-divider"></div>
-      <div class="stat-item"><span class="stat-n">${unique}</span><span class="stat-label">found by one source only</span></div>
-      <div class="stat-note">${esc(data.sources_used)} · ${data.total_candidates} candidates before deduplication</div>
-    </div>`;
+    const agreed = papers.filter(function(p) { return p.sourceCount > 1; }).length;
+    const unique  = papers.filter(function(p) { return p.sourceCount === 1; }).length;
+    html += '<div class="stats-bar">' +
+      '<div class="stat-item"><span class="stat-n">' + papers.length + '</span><span class="stat-label">total papers</span></div>' +
+      '<div class="stat-divider"></div>' +
+      '<div class="stat-item"><span class="stat-n agreed">' + agreed + '</span><span class="stat-label">found by multiple sources</span></div>' +
+      '<div class="stat-divider"></div>' +
+      '<div class="stat-item"><span class="stat-n">' + unique + '</span><span class="stat-label">found by one source only</span></div>' +
+      '<div class="stat-note">' + esc(data.sources_used) + ' · ' + data.total_candidates + ' candidates before deduplication</div>' +
+      '</div>';
   }
 
-  // Timeline
+  // Timeline bar
   html += '<div class="timeline-bar">';
-  for (const d of decades) {
+  for (let i = 0; i < decades.length; i++) {
+    const d = decades[i];
     const n = byDecade[d].length;
-    html += `<div class="tbar-seg has-data" onclick="scrollToId('dec-${d}')">${d}s<span class="tbar-sub">${n} paper${n>1?'s':''}</span></div>`;
+    html += '<div class="tbar-seg has-data" onclick="scrollToId(\'dec-' + d + '\')">' + d + 's<span class="tbar-sub">' + n + ' paper' + (n > 1 ? 's' : '') + '</span></div>';
   }
   html += '</div>';
 
   // Papers by decade
-  for (const d of decades) {
+  for (let i = 0; i < decades.length; i++) {
+    const d  = decades[i];
     const ps = byDecade[d];
-    html += `<div class="decade-section" id="dec-${d}">
-      <div class="decade-label">${d}s <span class="decade-badge">${ps.length} paper${ps.length>1?'s':''}</span></div>`;
-    for (const p of ps) {
-      const vc        = venueClass(p.venue);
+    html += '<div class="decade-section" id="dec-' + d + '">' +
+      '<div class="decade-label">' + d + 's <span class="decade-badge">' + ps.length + ' paper' + (ps.length > 1 ? 's' : '') + '</span></div>';
+
+    for (let j = 0; j < ps.length; j++) {
+      const p  = ps[j];
+      const vc = venueClass(p.venue);
       const confClass = p.sourceCount > 1 ? 'high' : 'med';
-      const confLabel = multiSource ? `${p.sourceCount} of ${totalSources} sources` : (p.sources?.[0] || '');
+      const confLabel = multiSource ? (p.sourceCount + ' of ' + totalSrcs + ' sources') : (p.sources ? p.sources[0] : '');
       const titleHtml = p.url
-        ? `<a href="${esc(p.url)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px">${esc(p.title)}</a>`
+        ? '<a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.title) + '</a>'
         : esc(p.title);
-      html += `<div class="paper-card">
-        <div class="paper-top">
-          <div class="paper-title">${titleHtml}<span class="paper-year">(${p.year})</span></div>
-          <div class="paper-right">
-            ${multiSource ? `<span class="conf-pip ${confClass}">${confLabel}</span>` : ''}
-            <span class="venue-pill ${vc}">${esc(p.venue)}</span>
-          </div>
-        </div>
-        <div class="paper-authors">${esc(p.authors||'')}${p.url ? ` <a href="${esc(p.url)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);margin-left:6px">↗ link</a>` : ''}</div>
-        <div class="paper-insight">${renderMd(p.insight)}</div>
-      </div>`;
+      const linkHtml = p.url
+        ? ' <a href="' + esc(p.url) + '" target="_blank" rel="noopener" class="paper-link">↗ link</a>'
+        : '';
+
+      html += '<div class="paper-card">' +
+        '<div class="paper-top">' +
+        '<div class="paper-title">' + titleHtml + '<span class="paper-year">(' + p.year + ')</span></div>' +
+        '<div class="paper-right">' +
+        '<span class="conf-pip ' + confClass + '">' + confLabel + '</span>' +
+        '<span class="venue-pill ' + vc + '">' + esc(p.venue) + '</span>' +
+        '</div></div>' +
+        '<div class="paper-authors">' + esc(p.authors || '') + linkHtml + '</div>' +
+        '<div class="paper-insight">' + renderMd(p.insight) + '</div>' +
+        '</div>';
     }
     html += '</div>';
   }
 
   // Videos section
-  if (videos && videos.length) {
-    html += `<div class="decade-label" style="margin-top:2rem;margin-bottom:12px">Video tutorials &amp; talks <span class="decade-badge">${videos.length}</span></div>`;
-    for (const v of videos) {
-      const typeColors = {
-        'lecture': 'v-popl', 'conference talk': 'v-sosp',
-        'tutorial': 'v-cav', 'course': 'v-icfp'
-      };
+  if (videos && videos.length > 0) {
+    const typeColors = { 'lecture': 'v-popl', 'conference talk': 'v-sosp', 'tutorial': 'v-cav', 'course': 'v-icfp' };
+    html += '<div class="video-section-label">Video tutorials &amp; talks <span class="decade-badge">' + videos.length + '</span></div>';
+    for (let i = 0; i < videos.length; i++) {
+      const v  = videos[i];
       const tc = typeColors[v.type] || 'v-other';
-      html += `<div class="paper-card">
-        <div class="paper-top">
-          <div class="paper-title">
-            ${v.url
-              ? `<a href="${esc(v.url)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px">${esc(v.title)}</a>`
-              : esc(v.title)}
-          </div>
-          <div class="paper-right">
-            <span class="venue-pill ${tc}">${esc(v.type||'video')}</span>
-          </div>
-        </div>
-        <div class="paper-authors">${esc(v.speaker||'')}${v.url ? ` <a href="${esc(v.url)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);margin-left:6px">↗ watch</a>` : ''}</div>
-        <div class="paper-insight">${esc(v.description||'')}</div>
-      </div>`;
+      const titleHtml = v.url
+        ? '<a href="' + esc(v.url) + '" target="_blank" rel="noopener">' + esc(v.title) + '</a>'
+        : esc(v.title);
+      const watchHtml = v.url
+        ? ' <a href="' + esc(v.url) + '" target="_blank" rel="noopener" class="paper-link">↗ watch</a>'
+        : '';
+      html += '<div class="paper-card">' +
+        '<div class="paper-top">' +
+        '<div class="paper-title">' + titleHtml + '</div>' +
+        '<div class="paper-right"><span class="venue-pill ' + tc + '">' + esc(v.type || 'video') + '</span></div>' +
+        '</div>' +
+        '<div class="paper-authors">' + esc(v.speaker || '') + watchHtml + '</div>' +
+        '<div class="paper-insight">' + esc(v.description || '') + '</div>' +
+        '</div>';
     }
   }
 
-  html += `<hr><div class="followup-row">
-    <button onclick="askMore('What are the open research problems in ${concept} today?')">Open problems →</button>
-    <button onclick="askMore('Recommend a reading order to understand ${concept} deeply')">Reading order →</button>
-  </div>`;
+  html += '<hr><div class="followup-row">' +
+    '<button onclick="askMore(\'What are the open research problems in ' + concept + ' today?\')">Open problems →</button>' +
+    '<button onclick="askMore(\'Recommend a reading order to understand ' + concept + ' deeply\')">Reading order →</button>' +
+    '</div>';
 
   document.getElementById('mainContent').innerHTML = html;
 }
@@ -694,6 +684,7 @@ function scrollToId(id) {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
 function askMore(q) {
   document.getElementById('conceptInput').value = q;
   document.getElementById('conceptInput').focus();
