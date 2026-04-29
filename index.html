@@ -48,7 +48,7 @@ body {
   background: var(--bg-primary); border: 0.5px solid var(--border-mid);
   border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.5rem;
 }
-.search-row { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.search-row { display: flex; gap: 10px; flex-wrap: wrap; }
 .search-row input, .search-row select {
   font-size: 14px; padding: 9px 14px; border: 0.5px solid var(--border-mid);
   border-radius: var(--radius-md); background: var(--bg-secondary);
@@ -67,7 +67,7 @@ body {
 
 .sources-row {
   display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
-  padding-top: 12px; border-top: 0.5px solid var(--border-light);
+  padding-top: 12px; margin-top: 12px; border-top: 0.5px solid var(--border-light);
 }
 .sources-row > span { font-size: 12px; color: var(--text-secondary); }
 .source-toggle {
@@ -75,13 +75,6 @@ body {
   cursor: pointer; user-select: none;
 }
 .source-toggle input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; accent-color: var(--accent); }
-.openai-key { display: flex; align-items: center; gap: 8px; margin-left: auto; }
-.openai-key label { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
-.openai-key input {
-  font-size: 12px; padding: 6px 10px; font-family: monospace;
-  border: 0.5px solid var(--border-mid); border-radius: var(--radius-md);
-  background: var(--bg-secondary); color: var(--text-primary); outline: none; width: 200px;
-}
 
 .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; align-items: center; }
 .tags-label { font-size: 12px; color: var(--text-secondary); }
@@ -93,28 +86,32 @@ body {
 .tag:hover { background: var(--bg-secondary); color: var(--text-primary); }
 .tag.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
 
-/* Pipeline steps */
+/* Pipeline */
 .pipeline {
   background: var(--bg-primary); border: 0.5px solid var(--border-mid);
   border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
 }
-.pipeline-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 14px; }
-.pipeline-steps { display: flex; flex-direction: column; gap: 10px; }
+.pipeline-title {
+  font-size: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 14px;
+}
+.pipeline-steps { display: flex; flex-direction: column; gap: 12px; }
 .pipeline-step { display: flex; align-items: center; gap: 12px; }
 .step-icon {
   width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
 }
-.step-icon.pending  { background: var(--bg-secondary); color: var(--text-tertiary); border: 0.5px solid var(--border-mid); }
-.step-icon.running  { background: var(--accent-bg); color: var(--accent); border: 0.5px solid var(--accent-border); animation: breathe 1.2s infinite; }
-.step-icon.done     { background: #E1F5EE; color: #085041; border: 0.5px solid #5DCAA5; }
-.step-icon.error    { background: #FCEBEB; color: #791F1F; border: 0.5px solid #F09595; }
+.step-icon.pending { background: var(--bg-secondary); color: var(--text-tertiary); border: 0.5px solid var(--border-mid); }
+.step-icon.running { background: var(--accent-bg); color: var(--accent); border: 0.5px solid var(--accent-border); animation: breathe 1.2s infinite; }
+.step-icon.done    { background: #E1F5EE; color: #085041; border: 0.5px solid #5DCAA5; }
+.step-icon.error   { background: #FCEBEB; color: #791F1F; border: 0.5px solid #F09595; }
 @keyframes breathe { 0%,100%{opacity:1} 50%{opacity:0.5} }
-.step-label { font-size: 13px; color: var(--text-secondary); }
+.step-label { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
 .step-label strong { color: var(--text-primary); font-weight: 500; }
-.step-label .step-detail { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
+.step-detail { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
 
-/* Results */
+/* Narrative */
 .narrative-box {
   background: var(--bg-primary); border: 0.5px solid var(--border-mid);
   border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.75rem;
@@ -125,19 +122,18 @@ body {
 }
 .narrative-text { font-size: 15px; line-height: 1.8; }
 .narrative-text strong { font-weight: 600; color: var(--accent); }
-
 .sources-badge {
-  display: inline-flex; align-items: center; gap: 5px;
+  display: inline-flex; align-items: center; gap: 6px;
   font-size: 11px; padding: 3px 9px; border-radius: 999px;
   background: var(--bg-secondary); border: 0.5px solid var(--border-mid);
   color: var(--text-secondary); margin-top: 12px;
 }
-.sources-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; }
+.sources-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; }
 
+/* Timeline bar */
 .timeline-bar {
-  display: flex; margin-bottom: 1.75rem;
-  border-radius: var(--radius-md); overflow: hidden;
-  border: 0.5px solid var(--border-mid); background: var(--bg-primary);
+  display: flex; margin-bottom: 1.75rem; border-radius: var(--radius-md);
+  overflow: hidden; border: 0.5px solid var(--border-mid); background: var(--bg-primary);
 }
 .tbar-seg {
   flex: 1; padding: 10px 6px; text-align: center; font-size: 12px;
@@ -149,6 +145,7 @@ body {
 .tbar-seg.has-data { color: var(--text-primary); font-weight: 500; }
 .tbar-seg .tbar-sub { display: block; font-size: 10px; color: var(--text-secondary); font-weight: 400; margin-top: 2px; }
 
+/* Decade */
 .decade-section { margin-bottom: 2rem; }
 .decade-label {
   font-size: 12px; font-weight: 600; color: var(--text-secondary);
@@ -163,6 +160,7 @@ body {
   color: var(--text-secondary); font-weight: 400; text-transform: none; letter-spacing: 0;
 }
 
+/* Paper card */
 .paper-card {
   background: var(--bg-primary); border: 0.5px solid var(--border-light);
   border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px;
@@ -172,7 +170,7 @@ body {
 .paper-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
 .paper-title { font-size: 14px; font-weight: 500; line-height: 1.5; flex: 1; }
 .paper-year { font-size: 12px; color: var(--text-secondary); font-weight: 400; margin-left: 4px; }
-.paper-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+.paper-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
 .venue-pill { font-size: 11px; padding: 3px 9px; border-radius: 999px; white-space: nowrap; font-weight: 500; }
 .v-pldi  { background:#E6F1FB; color:#0C447C; }
 .v-popl  { background:#EEEDFE; color:#3C3489; }
@@ -195,6 +193,7 @@ body {
 .paper-insight { font-size: 13px; line-height: 1.65; }
 .paper-insight em { color: var(--accent); font-style: normal; font-weight: 500; }
 
+/* Follow-up */
 .followup-row {
   display: flex; gap: 10px; flex-wrap: wrap;
   padding: 1.25rem 0 0.5rem; border-top: 0.5px solid var(--border-light);
@@ -207,9 +206,8 @@ body {
 .followup-row button:hover { background: var(--bg-secondary); }
 
 .error-box {
-  background: #FCEBEB; border: 0.5px solid #F09595;
-  border-radius: var(--radius-lg); padding: 1rem 1.25rem;
-  font-size: 13px; color: #791F1F; margin-bottom: 1rem;
+  background: #FCEBEB; border: 0.5px solid #F09595; border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem; font-size: 13px; color: #791F1F; margin-bottom: 1rem;
 }
 .error-box strong { display: block; margin-bottom: 4px; font-weight: 600; }
 hr { border: none; border-top: 0.5px solid var(--border-light); margin: 2rem 0; }
@@ -245,10 +243,6 @@ hr { border: none; border-top: 0.5px solid var(--border-light); margin: 2rem 0; 
       <label class="source-toggle">
         <input type="checkbox" id="useGptChk" checked /> ChatGPT (GPT-4o)
       </label>
-      <div class="openai-key">
-        <label for="gptKeyInput">OpenAI key:</label>
-        <input type="password" id="gptKeyInput" placeholder="sk-… (needed for GPT-4o)" autocomplete="off" />
-      </div>
     </div>
   </div>
 
@@ -257,7 +251,7 @@ hr { border: none; border-top: 0.5px solid var(--border-light); margin: 2rem 0; 
 
 </div>
 <script>
-const CLAUDE_PROXY = 'https://cs-research-proxy.rrangaiyengar.workers.dev';
+const PROXY_BASE = 'https://cs-research-proxy.rrangaiyengar.workers.dev';
 
 const SUGGESTIONS = [
   'type inference','garbage collection','consensus algorithms','model checking',
@@ -302,15 +296,12 @@ function renderTags() {
   });
 }
 
-// ── Prompts ───────────────────────────────────────────────────────────────
-
 function gatherPrompt(concept, area) {
   return `You are a computer science research expert.
 
 Find 8-12 highly influential, REAL published papers about "${concept}" from top A* CS venues (${AREA_DESCS[area]}).
 Papers should span multiple decades. For each, write a 1-2 sentence insight about its contribution. Use **bold** for the single most important phrase.
-
-Only include papers you are certain actually exist. Do not hallucinate titles or authors.
+Only include papers you are certain actually exist. Do not hallucinate.
 
 Respond ONLY with valid JSON, no markdown fences:
 {
@@ -321,7 +312,7 @@ Respond ONLY with valid JSON, no markdown fences:
 }
 
 function synthesisPrompt(concept, claudePapers, gptPapers) {
-  return `You are a computer science research expert. Two AI models were asked to find influential papers about "${concept}" from top A* CS venues. Here are their results:
+  return `You are a computer science research expert. Two AI models were asked to find influential papers about "${concept}" from top A* CS venues.
 
 === Claude's papers ===
 ${JSON.stringify(claudePapers, null, 2)}
@@ -329,39 +320,30 @@ ${JSON.stringify(claudePapers, null, 2)}
 === GPT-4o's papers ===
 ${JSON.stringify(gptPapers, null, 2)}
 
-Your job: synthesize these into ONE high-quality, coherent response.
+Synthesize these into ONE high-quality unified response:
+1. Deduplicate papers with the same or very similar titles — keep one entry. Papers found by both have higher confidence.
+2. Discard any papers that seem hallucinated or not genuinely important.
+3. Write a unified 4-5 sentence narrative about how "${concept}" evolved. Use **bold** for key terms.
+4. For each paper write a fresh synthesized insight (1-2 sentences). Use **bold** for the key idea.
+5. Add "confidence": "high" if both models found it, "medium" if only one did.
+6. Aim for 10-15 strongest papers, well-distributed across decades.
 
-Rules:
-1. Deduplicate: if both models found the same paper (same or very similar title), include it once. Papers found by both models have higher confidence.
-2. Verify quality: include a paper only if you are confident it is real and genuinely important for "${concept}". Discard any that seem hallucinated.
-3. Write a unified 4-5 sentence narrative about how "${concept}" evolved — drawing on the best insights from both models' evolution summaries.
-4. For each paper, write a fresh, synthesized insight (1-2 sentences) that captures the best of what both models said. Use **bold** for the key idea.
-5. Add a "confidence" field: "high" if both models found this paper, "medium" if only one did.
-6. Aim for 10-15 of the strongest papers total, well-distributed across decades.
-
-Respond ONLY with valid JSON, no markdown fences, no preamble:
+Respond ONLY with valid JSON, no markdown fences:
 {
   "concept": "string",
-  "evolution_summary": "string (4-5 sentences, use **bold** for key terms)",
+  "evolution_summary": "string",
   "sources_used": "Claude + GPT-4o",
   "total_candidates": ${claudePapers.length + gptPapers.length},
   "papers": [
-    {
-      "title": "string",
-      "authors": "string",
-      "year": 1990,
-      "venue": "POPL",
-      "insight": "string",
-      "confidence": "high | medium"
-    }
+    { "title": "string", "authors": "string", "year": 1990, "venue": "POPL", "insight": "string", "confidence": "high | medium" }
   ]
 }`;
 }
 
-// ── Model calls ───────────────────────────────────────────────────────────
+// ── API calls through the worker ──────────────────────────────────────────
 
 async function callClaude(promptText, signal) {
-  const resp = await fetch(CLAUDE_PROXY, {
+  const resp = await fetch(PROXY_BASE, {
     method: 'POST', signal,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -373,14 +355,14 @@ async function callClaude(promptText, signal) {
   });
   if (!resp.ok) {
     const e = await resp.json().catch(() => ({}));
-    throw new Error(e?.error?.message || `Claude HTTP ${resp.status}`);
+    throw new Error(e?.error?.message || `Claude error: HTTP ${resp.status}`);
   }
+  // Stream response
   const reader = resp.body.getReader(), dec = new TextDecoder();
   let buf = '';
   while (true) {
     const { done, value } = await reader.read(); if (done) break;
-    const chunk = dec.decode(value, { stream: true });
-    for (const line of chunk.split('\n')) {
+    for (const line of dec.decode(value, { stream: true }).split('\n')) {
       if (!line.startsWith('data: ')) continue;
       const d = line.slice(6); if (d === '[DONE]') continue;
       try { const ev = JSON.parse(d); if (ev.type === 'content_block_delta' && ev.delta?.text) buf += ev.delta.text; } catch {}
@@ -389,56 +371,54 @@ async function callClaude(promptText, signal) {
   return JSON.parse(buf.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim());
 }
 
-async function callGPT(promptText, apiKey, signal) {
-  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+async function callGPT(promptText, signal) {
+  // Routes to /openai on the worker — key injected server-side
+  const resp = await fetch(PROXY_BASE + '/openai', {
     method: 'POST', signal,
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'gpt-4o', max_tokens: 3000, temperature: 0.2,
+      model: 'gpt-4o',
+      max_tokens: 3000,
+      temperature: 0.2,
       messages: [
         { role: 'system', content: 'You are a CS research expert. Respond only with valid JSON, no markdown.' },
-        { role: 'user', content: promptText }
+        { role: 'user',   content: promptText }
       ]
     })
   });
   if (!resp.ok) {
     const e = await resp.json().catch(() => ({}));
-    throw new Error(e?.error?.message || `OpenAI HTTP ${resp.status}`);
+    throw new Error(e?.error?.message || `GPT error: HTTP ${resp.status}`);
   }
   const json = await resp.json();
   const raw = json.choices?.[0]?.message?.content || '{}';
   return JSON.parse(raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim());
 }
 
-// ── Pipeline UI helpers ───────────────────────────────────────────────────
+// ── Pipeline UI ───────────────────────────────────────────────────────────
 
-function setStep(id, state, detail) {
-  const icon  = document.getElementById('icon-' + id);
-  const label = document.getElementById('detail-' + id);
-  if (icon)  icon.className  = `step-icon ${state}`;
-  if (label) label.textContent = detail || '';
+function showPipeline(steps) {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="pipeline">
+      <div class="pipeline-title">Building your answer</div>
+      <div class="pipeline-steps">
+        ${steps.map(s => `
+          <div class="pipeline-step">
+            <div class="step-icon running" id="icon-${s.id}">…</div>
+            <div class="step-label">
+              <strong>${s.label}</strong>
+              <div class="step-detail" id="detail-${s.id}">${s.detail}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
 }
 
-function showPipeline(useClaude, useGpt) {
-  const steps = [];
-  if (useClaude) steps.push({ id: 'claude', label: 'Claude', detail: 'Searching A* venues…' });
-  if (useGpt)    steps.push({ id: 'gpt',    label: 'GPT-4o', detail: 'Searching A* venues…' });
-  if (useClaude && useGpt) steps.push({ id: 'synth', label: 'Synthesis', detail: 'Waiting for both sources…' });
-
-  const html = `<div class="pipeline">
-    <div class="pipeline-title">Building your answer</div>
-    <div class="pipeline-steps">
-      ${steps.map(s => `
-        <div class="pipeline-step">
-          <div class="step-icon running" id="icon-${s.id}">…</div>
-          <div class="step-label">
-            <strong>${s.label}</strong>
-            <div class="step-detail" id="detail-${s.id}">${s.detail}</div>
-          </div>
-        </div>`).join('')}
-    </div>
-  </div>`;
-  document.getElementById('mainContent').innerHTML = html;
+function setStep(id, state, detail) {
+  const icon = document.getElementById('icon-' + id);
+  const det  = document.getElementById('detail-' + id);
+  if (icon) icon.className = `step-icon ${state}`;
+  if (det && detail) det.textContent = detail;
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────
@@ -450,11 +430,9 @@ async function runSearch() {
   const area      = document.getElementById('areaSelect').value;
   const useClaude = document.getElementById('useClaudeChk').checked;
   const useGpt    = document.getElementById('useGptChk').checked;
-  const gptKey    = document.getElementById('gptKeyInput').value.trim();
 
   if (!concept) { document.getElementById('conceptInput').focus(); return; }
   if (!useClaude && !useGpt) { alert('Enable at least one source.'); return; }
-  if (useGpt && !gptKey) { document.getElementById('gptKeyInput').focus(); alert('Enter your OpenAI key to use GPT-4o as a source.'); return; }
 
   if (currentAbort) currentAbort.abort();
   currentAbort = new AbortController();
@@ -463,22 +441,25 @@ async function runSearch() {
   document.querySelectorAll('.tag').forEach(t => t.classList.toggle('active', t.textContent === concept));
   document.getElementById('searchBtn').disabled = true;
 
-  showPipeline(useClaude, useGpt);
+  const steps = [];
+  if (useClaude) steps.push({ id: 'claude', label: 'Claude',     detail: 'Searching A* venues…' });
+  if (useGpt)    steps.push({ id: 'gpt',    label: 'GPT-4o',     detail: 'Searching A* venues…' });
+  if (useClaude && useGpt) steps.push({ id: 'synth', label: 'Synthesis', detail: 'Waiting for both sources…' });
+  showPipeline(steps);
 
   try {
     const gather = gatherPrompt(concept, area);
 
-    // Phase 1 — gather in parallel
     const [claudeResult, gptResult] = await Promise.all([
       useClaude
         ? callClaude(gather, signal)
-            .then(r => { setStep('claude', 'done', `Found ${r.papers?.length || 0} papers`); return r; })
+            .then(r  => { setStep('claude', 'done',  `Found ${r.papers?.length || 0} papers`); return r; })
             .catch(e => { setStep('claude', 'error', e.message); return null; })
         : Promise.resolve(null),
       useGpt
-        ? callGPT(gather, gptKey, signal)
-            .then(r => { setStep('gpt', 'done', `Found ${r.papers?.length || 0} papers`); return r; })
-            .catch(e => { setStep('gpt', 'error', e.message); return null; })
+        ? callGPT(gather, signal)
+            .then(r  => { setStep('gpt',    'done',  `Found ${r.papers?.length || 0} papers`); return r; })
+            .catch(e => { setStep('gpt',    'error', e.message); return null; })
         : Promise.resolve(null)
     ]);
 
@@ -486,31 +467,28 @@ async function runSearch() {
     const gptPapers    = gptResult?.papers    || [];
 
     if (!claudePapers.length && !gptPapers.length) {
-      throw new Error('No papers found from either source. Check your API keys.');
+      throw new Error('No papers found from either source. Check that the Cloudflare Worker secrets are set.');
     }
 
     let finalData;
 
-    // Phase 2 — synthesize if we have results from both
     if (useClaude && useGpt && claudePapers.length && gptPapers.length) {
       setStep('synth', 'running', 'Merging and synthesizing…');
       finalData = await callClaude(synthesisPrompt(concept, claudePapers, gptPapers), signal);
       setStep('synth', 'done', `Synthesized ${finalData.papers?.length || 0} papers from ${finalData.total_candidates || claudePapers.length + gptPapers.length} candidates`);
     } else {
-      // Single source — still ask Claude to clean up and write a narrative
+      // Single source — ask Claude to write a narrative
       const onlyPapers = claudePapers.length ? claudePapers : gptPapers;
+      const narrativeResult = await callClaude(
+        `Write a 4-5 sentence narrative about how "${concept}" evolved in CS research. Use **bold** for key terms. Respond ONLY with {"evolution_summary": "..."}`,
+        signal
+      );
       finalData = {
         concept,
-        evolution_summary: '',
+        evolution_summary: narrativeResult.evolution_summary || '',
         sources_used: claudePapers.length ? 'Claude' : 'GPT-4o',
         papers: onlyPapers.map(p => ({ ...p, confidence: 'medium' }))
       };
-      // Ask Claude for the narrative
-      const narrativeOnly = await callClaude(
-        `Write a 4-5 sentence narrative about how the concept of "${concept}" evolved in computer science research, from its origins to the modern day. Use **bold** for key terms. Respond ONLY with {"evolution_summary": "..."}`,
-        signal
-      );
-      finalData.evolution_summary = narrativeOnly.evolution_summary || '';
     }
 
     renderResults(finalData, concept);
@@ -528,24 +506,20 @@ async function runSearch() {
 
 function renderResults(data, concept) {
   const papers = (data.papers || []).sort((a, b) => a.year - b.year);
-  const main = document.getElementById('mainContent');
-
   const byDecade = {};
   for (const p of papers) {
     const d = Math.floor(p.year / 10) * 10;
     (byDecade[d] = byDecade[d] || []).push(p);
   }
   const decades = Object.keys(byDecade).sort((a, b) => a - b);
+  const hasBothSources = (data.sources_used || '').includes('+');
 
   let html = '';
 
-  // Narrative
-  const narrative = (data.evolution_summary || '')
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  const sourceLabel = data.sources_used || 'Claude';
+  const narrative = (data.evolution_summary || '').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
   const candidateNote = data.total_candidates
-    ? `Synthesized from ${data.total_candidates} candidate papers across ${sourceLabel}.`
-    : `Source: ${sourceLabel}.`;
+    ? `Synthesized from ${data.total_candidates} candidate papers via ${data.sources_used}.`
+    : `Source: ${data.sources_used || 'Claude'}.`;
 
   html += `<div class="narrative-box">
     <h3>How "${esc(data.concept || concept)}" evolved</h3>
@@ -553,19 +527,17 @@ function renderResults(data, concept) {
     <div class="sources-badge"><span class="dot"></span>${esc(candidateNote)}</div>
   </div>`;
 
-  // Timeline bar
   html += '<div class="timeline-bar">';
   for (const d of decades) {
     const n = byDecade[d].length;
-    html += `<div class="tbar-seg has-data" onclick="scrollToId('dec-${d}')">${d}s<span class="tbar-sub">${n} paper${n > 1 ? 's' : ''}</span></div>`;
+    html += `<div class="tbar-seg has-data" onclick="scrollToId('dec-${d}')">${d}s<span class="tbar-sub">${n} paper${n>1?'s':''}</span></div>`;
   }
   html += '</div>';
 
-  // Papers by decade
   for (const d of decades) {
     const ps = byDecade[d];
     html += `<div class="decade-section" id="dec-${d}">
-      <div class="decade-label">${d}s <span class="decade-badge">${ps.length} paper${ps.length > 1 ? 's' : ''}</span></div>`;
+      <div class="decade-label">${d}s <span class="decade-badge">${ps.length} paper${ps.length>1?'s':''}</span></div>`;
     for (const p of ps) {
       const vc = venueClass(p.venue);
       const confClass = p.confidence === 'high' ? 'high' : 'med';
@@ -574,35 +546,31 @@ function renderResults(data, concept) {
         <div class="paper-top">
           <div class="paper-title">${esc(p.title)}<span class="paper-year">(${p.year})</span></div>
           <div class="paper-right">
-            ${data.sources_used && data.sources_used.includes('+')
-              ? `<span class="conf-pip ${confClass}">${confLabel}</span>`
-              : ''}
+            ${hasBothSources ? `<span class="conf-pip ${confClass}">${confLabel}</span>` : ''}
             <span class="venue-pill ${vc}">${esc(p.venue)}</span>
           </div>
         </div>
-        <div class="paper-authors">${esc(p.authors || '')}</div>
+        <div class="paper-authors">${esc(p.authors||'')}</div>
         <div class="paper-insight">${renderMd(p.insight)}</div>
       </div>`;
     }
     html += '</div>';
   }
 
-  // Follow-ups
   html += `<hr><div class="followup-row">
     <button onclick="askMore('What are the open research problems in ${concept} today?')">Open problems →</button>
     <button onclick="askMore('Recommend a reading order to understand ${concept} deeply')">Reading order →</button>
-    <button onclick="askMore('How does ${concept} connect to AI and machine learning research?')">AI/ML connection →</button>
+    <button onclick="askMore('How does ${concept} connect to AI and machine learning?')">AI/ML connection →</button>
     <button onclick="askMore('What are the most controversial ideas in ${concept}?')">Controversies →</button>
   </div>`;
 
-  main.innerHTML = html;
+  document.getElementById('mainContent').innerHTML = html;
 }
 
 function scrollToId(id) {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-
 function askMore(q) {
   document.getElementById('conceptInput').value = q;
   document.getElementById('conceptInput').focus();
