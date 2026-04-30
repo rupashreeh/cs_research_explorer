@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PL Research Concept Explorer</title>
+<title>PL & Formal Methods Concept Explorer</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -231,7 +231,7 @@ footer {
 <div class="app">
 
   <div class="header">
-    <h1>CS Research Concept Explorer</h1>
+    <h1>PL &amp; Formal Methods Concept Explorer</h1>
   </div>
 
   <div class="search-card">
@@ -425,11 +425,18 @@ async function callOpenAICompat(endpoint, prompt, signal) {
   const resp = await fetch(endpoint, {
     method: 'POST', signal,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages: makeMessages(prompt), max_tokens: 3000, temperature: 0.2 })
+    body: JSON.stringify({ messages: makeMessages(prompt), max_tokens: 4000, temperature: 0.2 })
   });
   if (!resp.ok) {
     const e = await resp.json().catch(function() { return {}; });
-    throw new Error(e.error ? e.error.message : 'HTTP ' + resp.status);
+    const msg = e.error ? e.error.message : '';
+    // Friendly rate limit message
+    if (resp.status === 429 || (msg && msg.toLowerCase().includes('rate limit'))) {
+      const waitMatch = msg.match(/try again in ([^\.\-]+)/i);
+      const wait = waitMatch ? ' Try again in ' + waitMatch[1].trim() + '.' : ' Daily limit reached — try again later.';
+      throw new Error('Rate limit reached.' + wait);
+    }
+    throw new Error(msg || 'HTTP ' + resp.status);
   }
   const json = await resp.json();
   const raw = (json.choices && json.choices[0] && json.choices[0].message) ? json.choices[0].message.content : '{}';
