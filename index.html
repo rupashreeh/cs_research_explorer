@@ -369,8 +369,10 @@ function renderTags() {
 
 function gatherPrompt(concept, area) {
   return 'You are a computer science research expert.\n\n' +
-    'Find 8-12 highly influential, REAL published papers about "' + concept + '" from top A* CS venues (' + AREA_DESCS[area] + ').\n' +
-    'Papers should span multiple decades. For each, write a 1-2 sentence insight about its contribution. Use **bold** for the single most important phrase.\n' +
+    'Find 10-15 highly influential, REAL published papers about "' + concept + '" from top A* CS venues (' + AREA_DESCS[area] + ').\n' +
+    'Papers MUST span from the earliest foundational work all the way through to recent work (2020-2025). ' +
+    'Aim for at least 3-4 papers from 2015 onwards and at least 2 papers from 2020-2025. Do not stop at 2010.\n' +
+    'For each paper write a 1-2 sentence insight about its contribution. Use **bold** for the single most important phrase.\n' +
     'Only include papers you are certain actually exist. Do not hallucinate.\n\n' +
     'For the url field: provide the most likely stable URL (ACM DL, arXiv, USENIX, IEEE). If unsure, use null.\n\n' +
     'Respond ONLY with valid JSON, no markdown fences:\n' +
@@ -431,7 +433,7 @@ async function callClaude(prompt, signal) {
     method: 'POST', signal,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514', max_tokens: 3000, stream: true,
+      model: 'claude-sonnet-4-20250514', max_tokens: 4000, stream: true,
       messages: [{ role: 'user', content: prompt }]
     })
   });
