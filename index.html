@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CS Research Concept Explorer</title>
+<title>PL Research Concept Explorer</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -336,23 +336,23 @@ function normTitle(t) {
 }
 
 function gatherPrompt(concept, area) {
-  return 'You are a computer science research expert.\n\n' +
+  return 'You are a computer science research expert. Respond with a single raw JSON object and nothing else — no explanation, no markdown, no code fences, no text before or after the JSON.\n\n' +
     'Find 10-15 highly influential, REAL published papers about "' + concept + '" from top A* CS venues (' + AREA_DESCS[area] + ').\n' +
-    'Papers MUST span from the earliest foundational work all the way through to recent work (2020-2025). ' +
-    'Aim for at least 3-4 papers from 2015 onwards and at least 2 papers from 2020-2025. Do not stop at 2010.\n' +
-    'For each paper write a 1-2 sentence insight about its contribution. Use **bold** for the single most important phrase.\n' +
-    'Only include papers you are certain actually exist. Do not hallucinate.\n\n' +
-    'For the url field: provide the most likely stable URL (ACM DL, arXiv, USENIX, IEEE). If unsure, use null.\n\n' +
-    'Respond ONLY with valid JSON, no markdown fences:\n' +
-    '{"papers":[{"title":"string","authors":"string","year":1985,"venue":"POPL","insight":"string","url":"https://... or null"}]}';
+    'Papers MUST span from the earliest foundational work through to recent work (2020-2025). ' +
+    'Include at least 2 papers from 2020-2025. Do not stop at 2010.\n' +
+    'For each paper write a 1-2 sentence insight. Use **bold** for the key phrase.\n' +
+    'Only include papers you are certain exist. Do not hallucinate.\n' +
+    'For url: stable link (ACM DL, arXiv, USENIX, IEEE) or null.\n\n' +
+    'Output ONLY this JSON, starting with { and ending with }:\n' +
+    '{"papers":[{"title":"string","authors":"string","year":1985,"venue":"POPL","insight":"string","url":null}]}';
 }
 
 function videosPrompt(concept) {
-  return 'You are a computer science education expert.\n\n' +
-    'List 4-6 high-quality, REAL video tutorials, lecture series, or conference talks about "' + concept + '" freely available online.\n' +
+  return 'You are a computer science education expert. Respond with a single raw JSON object and nothing else — no explanation, no markdown, no code fences, no text before or after.\n\n' +
+    'List 4-6 high-quality, REAL video tutorials, lectures, or conference talks about "' + concept + '" freely available online.\n' +
     'Only include videos you are confident actually exist.\n\n' +
-    'Respond ONLY with valid JSON, no markdown fences:\n' +
-    '{"videos":[{"title":"string","speaker":"string","url":"https://...","description":"1 sentence","type":"lecture|conference talk|tutorial|course"}]}';
+    'Output ONLY this JSON, starting with { and ending with }:\n' +
+    '{"videos":[{"title":"string","speaker":"string","description":"1 sentence","type":"lecture|conference talk|tutorial|course"}]}';
 }
 
 // ── API calls ─────────────────────────────────────────────────────────────
@@ -365,35 +365,41 @@ function makeMessages(prompt) {
 }
 
 function parseJSON(raw) {
+  // Strip markdown fences
   let s = raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
-  try {
-    return JSON.parse(s);
-  } catch(e) {
-    // Try to recover truncated JSON by finding the last complete array entry
-    // and closing the structure
-    try {
-      // Remove trailing comma before closing brace/bracket
-      s = s.replace(/,\s*([}\]])/g, '$1');
-      return JSON.parse(s);
-    } catch(e2) {
-      try {
-        // Find last complete paper object and close the array + object
-        const lastBrace = s.lastIndexOf('}');
-        if (lastBrace !== -1) {
-          let fixed = s.slice(0, lastBrace + 1);
-          // Close papers array and root object if needed
-          const openBrackets = (fixed.match(/\[/g) || []).length;
-          const closeBrackets = (fixed.match(/\]/g) || []).length;
-          const openBraces = (fixed.match(/\{/g) || []).length;
-          const closeBraces = (fixed.match(/\}/g) || []).length;
-          for (let i = 0; i < openBrackets - closeBrackets; i++) fixed += ']';
-          for (let i = 0; i < openBraces - closeBraces; i++) fixed += '}';
-          return JSON.parse(fixed);
-        }
-      } catch(e3) {}
-      throw new Error('Invalid JSON from model: ' + e.message);
-    }
+
+  // Extract the outermost { ... } block — handles preamble/postamble text
+  const first = s.indexOf('{');
+  const last  = s.lastIndexOf('}');
+  if (first !== -1 && last !== -1 && last > first) {
+    s = s.slice(first, last + 1);
   }
+
+  // Attempt 1: clean parse
+  try { return JSON.parse(s); } catch(e1) {}
+
+  // Attempt 2: remove trailing commas before ] or }
+  try {
+    const s2 = s.replace(/,\s*([}\]])/g, '$1');
+    return JSON.parse(s2);
+  } catch(e2) {}
+
+  // Attempt 3: salvage truncated JSON — close unclosed brackets/braces
+  try {
+    const lastBrace = s.lastIndexOf('}');
+    if (lastBrace !== -1) {
+      let fixed = s.slice(0, lastBrace + 1);
+      const opens  = (fixed.match(/\[/g) || []).length;
+      const closes = (fixed.match(/\]/g) || []).length;
+      const obraces = (fixed.match(/\{/g) || []).length;
+      const cbraces = (fixed.match(/\}/g) || []).length;
+      for (let i = 0; i < opens  - closes;  i++) fixed += ']';
+      for (let i = 0; i < obraces - cbraces; i++) fixed += '}';
+      return JSON.parse(fixed);
+    }
+  } catch(e3) {}
+
+  throw new Error('Invalid JSON from model — try again');
 }
 
 async function callClaude(prompt, signal) {
