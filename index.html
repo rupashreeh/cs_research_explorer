@@ -86,16 +86,6 @@ body {
 .source-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.4; }
 .source-card.active .source-desc { color: var(--accent-text); }
 
-.tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; align-items: center; }
-.tags-label { font-size: 12px; color: var(--text-secondary); }
-.tag {
-  font-size: 12px; padding: 5px 12px; border-radius: 999px;
-  border: 0.5px solid var(--border-mid); color: var(--text-secondary);
-  cursor: pointer; background: var(--bg-primary); transition: all 0.15s; user-select: none;
-}
-.tag:hover { background: var(--bg-secondary); color: var(--text-primary); }
-.tag.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
-
 .pipeline {
   background: var(--bg-primary); border: 0.5px solid var(--border-mid);
   border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
@@ -286,7 +276,6 @@ footer {
     </div>
   </div>
 
-  <div class="tags" id="tagRow"><span class="tags-label">Try:</span></div>
   <div id="mainContent"></div>
   <footer>
     <p>AI-generated content · Results may contain errors · Always verify before citing · Built with Claude</p>
@@ -310,12 +299,7 @@ function toggleSource(id) {
   document.getElementById('check-' + id).textContent = active[id] ? '✓' : '';
 }
 
-const SUGGESTIONS = [
-  'type inference','garbage collection','consensus algorithms','model checking',
-  'linear types','distributed transactions','program verification','monads',
-  'memory models','theorem proving','dependent types','Byzantine fault tolerance',
-  'session types','abstract interpretation','Paxos','software transactional memory'
-];
+// ── Prompts ───────────────────────────────────────────────────────────────
 
 const AREA_DESCS = {
   all:  'programming languages (PLDI, POPL, ICFP, OOPSLA, ESOP), distributed systems (SOSP, OSDI, EuroSys, ASPLOS, USENIX ATC), formal methods (CAV, TACAS, FM, FMSD), and automata/theory (LICS, STOC, FOCS, CONCUR)',
@@ -350,22 +334,6 @@ function renderMd(s) {
 function normTitle(t) {
   return (t || '').toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
 }
-
-function renderTags() {
-  const row = document.getElementById('tagRow');
-  SUGGESTIONS.forEach(function(s) {
-    const t = document.createElement('span');
-    t.className = 'tag';
-    t.textContent = s;
-    t.onclick = function() {
-      document.getElementById('conceptInput').value = s;
-      runSearch();
-    };
-    row.appendChild(t);
-  });
-}
-
-// ── Prompts ───────────────────────────────────────────────────────────────
 
 function gatherPrompt(concept, area) {
   return 'You are a computer science research expert.\n\n' +
@@ -563,6 +531,24 @@ async function lookupPaper(paper, signal) {
   }
 }
 
+async function validateUrl(url) {
+  if (!url || url === 'null' || url === 'undefined') return false;
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(function() { controller.abort(); }, 5000);
+    const resp = await fetch(url, {
+      method: 'HEAD',
+      signal: controller.signal,
+      mode: 'no-cors' // avoids CORS errors — we just want to know if it resolves
+    });
+    clearTimeout(timeout);
+    // no-cors gives opaque response — if we get here without exception the URL resolved
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
 async function verifyWithSemanticScholar(papers, signal) {
   // Rate limit: SS allows ~1 req/sec without API key — batch with small delays
   const results = [];
@@ -571,19 +557,20 @@ async function verifyWithSemanticScholar(papers, signal) {
     const paper = papers[i];
     const ss = await lookupPaper(paper, signal);
     if (ss) {
-      // Use SS data: real URL, citation count, open access PDF if available
       const ssUrl = (ss.openAccessPdf && ss.openAccessPdf.url)
         ? ss.openAccessPdf.url
         : (ss.externalIds && ss.externalIds.DOI)
           ? 'https://doi.org/' + ss.externalIds.DOI
           : 'https://www.semanticscholar.org/paper/' + (ss.paperId || '');
+
+      // Validate the URL actually loads before using it
+      const urlWorks = await validateUrl(ssUrl);
+
       results.push(Object.assign({}, paper, {
-        ssVerified:    true,
-        ssUrl:         ssUrl,
-        ssCitations:   ss.citationCount || 0,
-        ssId:          ss.paperId || null,
-        // Override AI-guessed URL with verified one
-        url:           ssUrl
+        ssVerified:  true,
+        url:         urlWorks ? ssUrl : null,
+        ssCitations: ss.citationCount || 0,
+        ssId:        ss.paperId || null
       }));
     } else {
       results.push(Object.assign({}, paper, {
@@ -809,7 +796,6 @@ function askMore(q) {
   document.getElementById('conceptInput').focus();
 }
 
-renderTags();
 </script>
 </body>
 </html>
