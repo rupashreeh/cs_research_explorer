@@ -12,22 +12,23 @@
 <body>
 <div class="wrap">
   <header class="masthead">
-    <p class="eyebrow"><a class="backlink" href="./index.html">← Concept Explorer</a></p>
     <h1>Worked Examples</h1>
-    <p class="standfirst">One example carried end to end, with every executable claim tested against the states the program actually reaches.</p>
+    <nav class="page-nav">
+      <a href="./index.html">Explorer</a>
+      <a id="crossLink" data-page="story.html" href="story.html">Story</a>
+      <a class="here">Examples</a>
+    </nav>
   </header>
 
-  <form class="seek" id="seekForm">
+  <form class="search-card" id="seekForm">
     <input id="q" type="text" placeholder="logic, type theory, concurrency&hellip;" aria-label="Name a field" autocomplete="off">
-    <button type="submit">Open field</button>
+    <button type="submit">Explore &rarr;</button>
   </form>
 
-  <nav class="crumbs" id="crumbs" aria-label="Trail"></nav>
+  <nav class="crumbs" id="crumbs" aria-label="Trail" hidden></nav>
 
-  <div class="node-head">
-    <h2 id="nodeName">Logic</h2>
-    <p id="nodeBlurb"></p>
-  </div>
+  <h2 class="node-name" id="nodeName">Logic</h2>
+  <p class="node-blurb" id="nodeBlurb"></p>
 
   <section class="example" id="exampleBlock" hidden>
     <span class="tag">Running example</span>
@@ -35,20 +36,18 @@
     <p id="exText"></p>
   </section>
 
-  <div id="childBlock">
-    <p class="sub-label" id="subLabel">Subfields</p>
+  <div id="childBlock" class="demands">
     <ul class="chips" id="chips"></ul>
   </div>
 
   <div class="actions" id="actions">
-    <button class="ghost on" id="walkBtn">Walk the example</button>
-    <a class="ghost" id="crossLink" data-page="story.html" href="story.html">← Read the story</a>
+    <button class="primary" id="walkBtn">Walk the example</button>
   </div>
 
   <div id="status"></div>
   <div class="story" id="walk"></div>
 
-  <footer>Each executable claim is run against concrete states the program actually reaches, so <em>refuted</em> is a real counterexample. <em>Survived</em> only means none was found — a vacuous claim survives too. Prose with no executable claim is checked by nothing. Video links are searches, not verified URLs.</footer>
+  <footer>Executable claims are run against concrete states. <em>Refuted</em> is a counterexample; <em>survived</em> only means none was found. Prose is checked by nothing.</footer>
 </div>
 <script src="lineage-core.js"></script>
 <script src="example.js"></script>

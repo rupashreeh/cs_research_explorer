@@ -285,6 +285,7 @@
   }
 
   L.boot({
+    showExample: false, showDemands: false,
     ids: ['story','tellStory'],
     onNode: function(label, k){
       el.story.innerHTML = '';

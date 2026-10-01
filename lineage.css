@@ -194,3 +194,46 @@ footer{margin-top:52px;border-top:1px solid var(--rule);padding-top:16px;font-fa
 /* cross-page link styled as a button */
 a.ghost{text-decoration:none;display:inline-block;line-height:1.3}
 a.ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ---------- simplified layout ---------- */
+.masthead{border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:18px}
+.masthead h1{font-size:clamp(21px,3.4vw,27px)}
+.page-nav{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-family:var(--font-ui);font-size:13px}
+.page-nav a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;padding-bottom:1px}
+.page-nav a:hover{border-bottom-color:var(--accent)}
+.page-nav a.here{color:var(--muted);pointer-events:none}
+
+.search-card{display:flex;gap:8px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:12px;margin:0 0 18px}
+.search-card input{flex:1 1 220px;min-width:0;font-family:var(--font-ui);font-size:14px;padding:9px 12px;border:1px solid var(--rule);border-radius:6px;background:var(--bg);color:var(--fg)}
+.search-card input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.search-card button{font-family:var(--font-ui);font-size:14px;font-weight:500;padding:9px 20px;border-radius:6px;background:var(--accent);color:#fff;border:none;cursor:pointer}
+.search-card button:hover{opacity:.88}
+
+.node-name{font-family:var(--font-display);font-size:clamp(19px,2.8vw,25px);font-weight:600;margin:0;text-wrap:balance}
+.node-blurb{color:var(--muted);font-size:15px;margin:5px 0 0;max-width:62ch}
+
+/* subfields as quiet pills */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0 0;padding:0;list-style:none}
+.chip{display:inline-block;width:auto;text-align:left;background:none;border:1px solid var(--rule);border-radius:999px;padding:5px 13px;font-family:var(--font-ui);font-size:13px;color:var(--fg);cursor:pointer}
+.chip:hover{border-color:var(--accent);color:var(--accent);background:none}
+.chip b{display:inline;font-size:13px;font-weight:500;margin:0;color:inherit}
+.chip i{display:none}
+
+/* on the example page the demands are the content, so they get room */
+.demands .chips{display:block}
+.demands .chip{display:block;width:100%;border:none;border-left:2px solid var(--rule);border-radius:0;padding:7px 0 7px 13px;margin-bottom:2px}
+.demands .chip b{display:block;font-weight:600;margin-bottom:1px}
+.demands .chip i{display:block;font-size:12.5px;color:var(--muted);font-style:normal;line-height:1.45}
+.demands .chip:hover{border-left-color:var(--accent);background:var(--surface)}
+.demands .chip:hover b{color:var(--accent)}
+
+.example{padding:11px 14px;margin:16px 0 0}
+.example p{font-size:14px}
+.example h3{font-size:12.5px;margin-bottom:5px}
+
+.actions{margin:20px 0 0;gap:10px}
+button.primary{font-family:var(--font-ui);font-size:14px;font-weight:500;padding:10px 22px;border-radius:6px;background:var(--accent);color:#fff;border:none;cursor:pointer}
+button.primary:hover{opacity:.88}
+button.primary:disabled{opacity:.45;cursor:default}
+footer{margin-top:40px;font-size:11.5px}
+.wrap{padding-block:24px 60px}

@@ -640,6 +640,7 @@
 
 
   L.boot({
+    showExample: true, showDemands: true,
     ids: ['walk','walkBtn'],
     onNode: function(label, k){
       el.walk.innerHTML = '';

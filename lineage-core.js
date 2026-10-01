@@ -209,6 +209,7 @@
   // ---------- shared chrome ----------
   function renderCrumbs(){
     if (!el.crumbs) return;
+    el.crumbs.hidden = state.trail.length < 2;
     el.crumbs.innerHTML = state.trail.map(function(nm,i){
       var sep = i ? '<span class="sep">→</span>' : '';
       return sep + (i === state.trail.length-1
@@ -218,7 +219,7 @@
   }
 
   function renderExample(ex){
-    if (!el.exampleBlock) return;
+    if (!el.exampleBlock || !opts.showExample) return;
     if (!ex || !ex.text){ el.exampleBlock.hidden = true; return; }
     el.exampleBlock.hidden = false;
     el.exTitle.textContent = ex.title || 'Running example';
@@ -229,9 +230,9 @@
     if (!el.chips) return;
     if (!kids || !kids.length){ el.childBlock.hidden = true; return; }
     el.childBlock.hidden = false;
-    el.subLabel.textContent = 'What the example demands';
+    if (el.subLabel) el.subLabel.textContent = 'What the example demands';
     el.chips.innerHTML = kids.map(function(c){
-      var why = c.demand || c.blurb || '';
+      var why = opts.showDemands ? (c.demand || c.blurb || '') : '';
       return '<li><button type="button" class="chip" data-name="'+esc(c.name)+'">'+
              '<b>'+esc(c.name)+'</b>'+(why?'<i>'+esc(why)+'</i>':'')+'</button></li>';
     }).join('');
@@ -246,6 +247,7 @@
 
   // ---------- navigation ----------
   var onNode = function(){};
+  var opts = {};
 
   async function go(name, resetTo, skipHash){
     var k = key(name);
@@ -297,8 +299,8 @@
   }
 
   // ---------- boot ----------
-  function boot(opts){
-    opts = opts || {};
+  function boot(o){
+    opts = o || {};
     onNode = opts.onNode || function(){};
 
     (opts.ids || []).concat(
