@@ -239,10 +239,10 @@
   }
 
   function syncCrossLink(){
-    if (!el.crossLink) return;
     var s = slug(current() || '');
-    var base = el.crossLink.getAttribute('data-page');
-    el.crossLink.setAttribute('href', base + (s ? '#' + s : ''));
+    document.querySelectorAll('[data-page]').forEach(function(a){
+      a.setAttribute('href', a.getAttribute('data-page') + (s ? '#' + s : ''));
+    });
   }
 
   // ---------- navigation ----------

@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>PL &amp; Formal Methods Concept Explorer</title>
+<title>Field History</title>
 <link rel="stylesheet" href="lineage.css">
 </head>
 <body>
 <div class="wrap">
   <header class="masthead">
-    <h1>PL &amp; Formal Methods Concept Explorer</h1>
-    <p id="lead">Pick a field and see what its subfields were actually built to handle.</p>
+    <h1>Field History</h1>
+    <p id="lead">Two models suggest the papers, Semantic Scholar decides which exist, and the story is written from what is left.</p>
     <nav class="page-nav">
-      <a class="here">Fields</a>
-      <a data-page="history.html" href="history.html">History</a>
+      <a data-page="index.html" href="index.html">Fields</a>
+      <a class="here">History</a>
       <a data-page="example.html" href="example.html">Worked example</a>
     </nav>
   </header>
@@ -28,24 +28,18 @@
   <h2 class="node-name" id="nodeName">Logic</h2>
   <p class="node-blurb" id="nodeBlurb"></p>
 
-  <section class="example" id="exampleBlock" hidden>
-    <span class="tag">Running example</span>
-    <h3 id="exTitle"></h3>
-    <p id="exText"></p>
-  </section>
-
   <div id="childBlock">
     <ul class="chips" id="chips"></ul>
   </div>
 
-  <div class="actions" id="actions"><a class="btn-ghost" data-page="history.html" href="history.html">Read how it got here</a><a class="btn-ghost" data-page="example.html" href="example.html">Work the example through</a></div>
+  <div class="actions" id="actions"><button class="btn-primary" id="goBtn">Find the papers and write the history</button></div>
 
   <div id="status"></div>
-  
+  <div id="history"></div>
 
-  <footer>Subfields and examples are generated. The history page checks every paper against Semantic Scholar before citing it; the example page tests its own claims against concrete states.</footer>
+  <footer>Every paper named in the story was found in Semantic Scholar first. That it exists is checked. That it says what the sentence beside it claims is not — follow the link if it matters.</footer>
 </div>
 <script src="lineage-core.js"></script>
-<script src="index.js"></script>
+<script src="history.js"></script>
 </body>
 </html>

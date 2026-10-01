@@ -3,26 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Worked Examples</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<title>Worked Example</title>
 <link rel="stylesheet" href="lineage.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/roughjs/4.6.6/rough.js"></script>
-<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
 <div class="wrap">
   <header class="masthead">
-    <h1>Worked Examples</h1>
+    <h1>Worked Example</h1>
+    <p id="lead">One example carried the whole way through, with each claim tested against states the program really reaches.</p>
     <nav class="page-nav">
-      <a href="./index.html">Explorer</a>
-      <a id="crossLink" data-page="story.html" href="story.html">Story</a>
-      <a class="here">Examples</a>
+      <a data-page="index.html" href="index.html">Fields</a>
+      <a data-page="history.html" href="history.html">History</a>
+      <a class="here">Worked example</a>
     </nav>
   </header>
 
   <form class="search-card" id="seekForm">
-    <input id="q" type="text" placeholder="logic, type theory, concurrency&hellip;" aria-label="Name a field" autocomplete="off">
-    <button type="submit">Explore &rarr;</button>
+    <input id="q" type="text" placeholder="logic, type theory, consensus, model checking&hellip;" aria-label="Name a field" autocomplete="off">
+    <button class="btn-primary" type="submit">Open it</button>
   </form>
 
   <nav class="crumbs" id="crumbs" aria-label="Trail" hidden></nav>
@@ -40,15 +38,14 @@
     <ul class="chips" id="chips"></ul>
   </div>
 
-  <div class="actions" id="actions">
-    <button class="primary" id="walkBtn">Walk the example</button>
-  </div>
+  <div class="actions" id="actions"><button class="btn-primary" id="walkBtn">Work through it step by step</button></div>
 
   <div id="status"></div>
-  <div class="story" id="walk"></div>
+  <div id="walk"></div>
 
-  <footer>Executable claims are run against concrete states. <em>Refuted</em> is a counterexample; <em>survived</em> only means none was found. Prose is checked by nothing.</footer>
+  <footer><em>Refuted</em> means a counterexample was found and it is printed beside the step. <em>Survived</em> only means none was found. The prose is checked by nothing, and video links are searches.</footer>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/roughjs/4.6.6/rough.js"></script>
 <script src="lineage-core.js"></script>
 <script src="example.js"></script>
 </body>

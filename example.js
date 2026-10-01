@@ -644,7 +644,7 @@
     ids: ['walk','walkBtn'],
     onNode: function(label, k){
       el.walk.innerHTML = '';
-      el.walkBtn.textContent = 'Walk the example in ' + label;
+      el.walkBtn.textContent = 'Work through ' + label + ' step by step';
       el.actions.hidden = false;
     }
   });
