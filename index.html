@@ -45,6 +45,7 @@ body {
 .header p { font-size: 14px; color: var(--text-secondary); max-width: 680px; line-height: 1.75; }
 .lineage-link { color: var(--accent); text-decoration: none; border-bottom: 0.5px solid var(--accent-border); padding-bottom: 1px; transition: border-color 0.15s; }
 .lineage-link:hover { border-bottom-color: var(--accent); }
+.page-nav { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 10px; font-size: 14px; }
 
 .search-card {
   background: var(--bg-primary); border: 0.5px solid var(--border-mid);
@@ -234,7 +235,11 @@ footer {
 
   <div class="header">
     <h1>PL &amp; Formal Methods Concept Explorer</h1>
-    <p>Search the literature by concept &mdash; or <a class="lineage-link" href="lineage.html">read how these fields came about &rarr;</a></p>
+    <p>Search the literature by concept.</p>
+    <nav class="page-nav">
+      <a class="lineage-link" href="story.html">How these fields came about</a>
+      <a class="lineage-link" href="example.html">Worked examples</a>
+    </nav>
   </div>
 
   <div class="search-card">
@@ -254,16 +259,16 @@ footer {
     <div class="sources-section">
       <div class="sources-label">Sources — select one or more to search in parallel:</div>
       <div class="sources-grid">
-        <div class="source-card active" id="card-claude" onclick="toggleSource('claude')">
+        <div class="source-card" id="card-claude" onclick="toggleSource('claude')">
           <div class="source-card-top">
-            <div class="source-check" id="check-claude">✓</div>
+            <div class="source-check" id="check-claude"></div>
             <span class="source-name">Claude</span>
           </div>
-          <div class="source-desc">Anthropic · via proxy</div>
+          <div class="source-desc">Anthropic · needs API credits</div>
         </div>
-        <div class="source-card" id="card-gemini" onclick="toggleSource('gemini')">
+        <div class="source-card active" id="card-gemini" onclick="toggleSource('gemini')">
           <div class="source-card-top">
-            <div class="source-check" id="check-gemini"></div>
+            <div class="source-check" id="check-gemini">✓</div>
             <span class="source-name">Gemini</span>
           </div>
           <div class="source-desc">Google · free tier · via proxy</div>
@@ -273,7 +278,7 @@ footer {
             <div class="source-check" id="check-groq">✓</div>
             <span class="source-name">Groq</span>
           </div>
-          <div class="source-desc">Llama 3.3 · free tier · via proxy</div>
+          <div class="source-desc">GPT-OSS 120B · free tier · via proxy</div>
         </div>
       </div>
     </div>
@@ -294,7 +299,7 @@ const SOURCES = {
   groq:   { label: 'Groq/Llama' }
 };
 
-const active = { claude: true, gemini: false, groq: true };
+const active = { claude: false, gemini: true, groq: true };
 
 function toggleSource(id) {
   active[id] = !active[id];
@@ -655,7 +660,8 @@ async function runSearch() {
         });
     });
 
-    const videoPromise = callClaude(vPrompt, signal)
+    const videoSrc = activeSrcs[0];
+    const videoPromise = callSource(videoSrc, vPrompt, signal)
       .then(function(r) {
         setStep('videos', 'done', 'Found ' + (r.videos ? r.videos.length : 0) + ' resources');
         return r.videos || [];

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Concept Lineage</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="lineage.css">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow"><a class="backlink" href="./index.html">← Concept Explorer</a></p>
+    <h1>Concept Lineage</h1>
+    <p class="standfirst">How a field arrived at its current shape — each turn in the story beside the paper that forced it.</p>
+  </header>
+
+  <form class="seek" id="seekForm">
+    <input id="q" type="text" placeholder="logic, type theory, concurrency&hellip;" aria-label="Name a field" autocomplete="off">
+    <button type="submit">Open field</button>
+  </form>
+
+  <nav class="crumbs" id="crumbs" aria-label="Trail"></nav>
+
+  <div class="node-head">
+    <h2 id="nodeName">Logic</h2>
+    <p id="nodeBlurb"></p>
+  </div>
+
+  <section class="example" id="exampleBlock" hidden>
+    <span class="tag">Running example</span>
+    <h3 id="exTitle"></h3>
+    <p id="exText"></p>
+  </section>
+
+  <div id="childBlock">
+    <p class="sub-label" id="subLabel">Subfields</p>
+    <ul class="chips" id="chips"></ul>
+  </div>
+
+  <div class="actions" id="actions">
+    <button class="ghost on" id="tellStory">Tell the story</button>
+    <a class="ghost" id="crossLink" data-page="example.html" href="example.html">Walk the example →</a>
+  </div>
+
+  <div id="status"></div>
+  <div class="story" id="story"></div>
+
+  <footer>Each history is drafted by one model, then audited by a second one that sees only the claims and their citations. Every citation is looked up in Semantic Scholar and compared on title, authors and year. Google Scholar has no public API and blocks automated queries, so that link is a manual check. Papers marked <em>no match</em> or <em>disputed</em> are unverified.</footer>
+</div>
+<script src="lineage-core.js"></script>
+<script src="story.js"></script>
+</body>
+</html>
