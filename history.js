@@ -286,7 +286,7 @@ async function verifyWithSemanticScholar(papers, signal) {
     var k = key(label), cached = state.histories[k];
     if (cached){ el.status.innerHTML = ''; renderHistory(cached.st, cached.papers, cached.note); return; }
 
-    el.goBtn.disabled = true;
+    if (el.goBtn) el.goBtn.disabled = true;
     el.history.innerHTML = '';
     showPipeline(SOURCES.map(function(s){ return {id:s.id, label:s.label, detail:'Waiting'}; })
       .concat([{id:'ss', label:'Semantic Scholar', detail:'Waiting for papers'},
@@ -339,19 +339,19 @@ async function verifyWithSemanticScholar(papers, signal) {
     } catch (e) {
       setError(friendly(e, 'put that history together'));
     } finally {
-      el.goBtn.disabled = false;
+      if (el.goBtn) el.goBtn.disabled = false;
     }
   }
 
   L.boot({
     ids: ['history','goBtn'],
     showExample: false, showDemands: false,
-    onNode: function(label){
+    onNode: function(){
       el.history.innerHTML = '';
       el.status.innerHTML = '';
-      el.goBtn.textContent = 'Find the papers and write the history';
-      el.actions.hidden = false;
+      el.actions.hidden = true;
+      tellHistory();
     }
   });
-  el.goBtn.addEventListener('click', tellHistory);
+  el.goBtn.addEventListener('click', function(){ el.actions.hidden = true; tellHistory(); });
 })();

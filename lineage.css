@@ -224,3 +224,9 @@ footer em { font-style: normal; color: var(--text-secondary); }
   .beat { grid-template-columns: 1fr; }
   .step { grid-template-columns: 1fr; gap: 10px; }
 }
+
+/* home page sits a little lower and keeps its two choices close to the search */
+.home { max-width: 640px; }
+.home .masthead { margin-bottom: 1.25rem; }
+.home .actions { margin-top: 0; }
+.home .btn-ghost { flex: 1 1 220px; text-align: center; padding: 14px 18px; font-size: 14.5px; }

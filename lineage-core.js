@@ -197,6 +197,7 @@
   function setError(m){
     if (!el.status) return;
     el.status.innerHTML = '<div class="err">'+esc(m)+'</div>';
+    if (el.actions) el.actions.hidden = false;   // surface the retry
   }
   function friendly(e, what){
     var c = e && e.code;
@@ -276,7 +277,8 @@
 
     onNode(label, k);
 
-    if (state.children[k]) { renderChildren(state.children[k]); setStatus(''); }
+    if (opts.skipChildren) { setStatus(''); }
+    else if (state.children[k]) { renderChildren(state.children[k]); setStatus(''); }
     else if (seed) { state.children[k] = seed.children; renderChildren(seed.children); setStatus(''); }
     else {
       if (el.childBlock) el.childBlock.hidden = true;

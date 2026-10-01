@@ -7,15 +7,10 @@
 <link rel="stylesheet" href="lineage.css">
 </head>
 <body>
-<div class="wrap">
+<div class="wrap home">
   <header class="masthead">
     <h1>PL &amp; Formal Methods Concept Explorer</h1>
-    <p id="lead">Pick a field and see what its subfields were actually built to handle.</p>
-    <nav class="page-nav">
-      <a class="here">Fields</a>
-      <a data-page="history.html" href="history.html">History</a>
-      <a data-page="example.html" href="example.html">Worked example</a>
-    </nav>
+    <p>Name a field and find out how it got to be the way it is.</p>
   </header>
 
   <form class="search-card" id="seekForm">
@@ -23,27 +18,14 @@
     <button class="btn-primary" type="submit">Open it</button>
   </form>
 
-  <nav class="crumbs" id="crumbs" aria-label="Trail" hidden></nav>
-
-  <h2 class="node-name" id="nodeName">Logic</h2>
-  <p class="node-blurb" id="nodeBlurb"></p>
-
-  <section class="example" id="exampleBlock" hidden>
-    <span class="tag">Running example</span>
-    <h3 id="exTitle"></h3>
-    <p id="exText"></p>
-  </section>
-
-  <div id="childBlock">
-    <ul class="chips" id="chips"></ul>
+  <div class="actions" id="actions">
+    <a class="btn-ghost" id="toHistory" data-page="history.html" href="history.html">Read how it got here</a>
+    <a class="btn-ghost" id="toExample" data-page="example.html" href="example.html">Work through an example</a>
   </div>
 
-  <div class="actions" id="actions"><a class="btn-ghost" data-page="history.html" href="history.html">Read how it got here</a><a class="btn-ghost" data-page="example.html" href="example.html">Work the example through</a></div>
-
   <div id="status"></div>
-  
 
-  <footer>Subfields and examples are generated. The history page checks every paper against Semantic Scholar before citing it; the example page tests its own claims against concrete states.</footer>
+  <footer>Everything here is generated. The history page checks every paper against Semantic Scholar before citing it. The example page tries to refute its own claims.</footer>
 </div>
 <script src="lineage-core.js"></script>
 <script src="index.js"></script>

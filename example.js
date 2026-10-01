@@ -619,7 +619,7 @@
     var k = key(label), cached = state.walks[k];
     if (cached){ renderWalk(cached); return; }
 
-    el.walkBtn.disabled = true;
+    if (el.walkBtn) el.walkBtn.disabled = true;
     try {
       await backend();
       setStatus(routeName(DRAFT_ROUTE) + ' is working the example through ' + label + '…');
@@ -634,7 +634,7 @@
     } catch (e) {
       setError(friendly(e, 'work that example'));
     } finally {
-      el.walkBtn.disabled = false;
+      if (el.walkBtn) el.walkBtn.disabled = false;
     }
   }
 
@@ -642,11 +642,12 @@
   L.boot({
     showExample: true, showDemands: true,
     ids: ['walk','walkBtn'],
-    onNode: function(label, k){
+    onNode: function(){
       el.walk.innerHTML = '';
-      el.walkBtn.textContent = 'Work through ' + label + ' step by step';
-      el.actions.hidden = false;
+      el.status.innerHTML = '';
+      el.actions.hidden = true;
+      walkExample();
     }
   });
-  el.walkBtn.addEventListener('click', walkExample);
+  el.walkBtn.addEventListener('click', function(){ el.actions.hidden = true; walkExample(); });
 })();
