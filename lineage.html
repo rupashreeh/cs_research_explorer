@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Concept Lineage</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a chronological spine down the left; each beat pairs one line of narrative with the paper that forced it. */
+:root{
+  --bg:#f6f7f9;
+  --surface:#ffffff;
+  --surface-2:#eef1f6;
+  --fg:#111622;
+  --muted:#5c6679;
+  --rule:#d6dbe4;
+  --accent:#23408e;
+  --accent-soft:#e4e9f7;
+  --ok:#2f6b4f;
+  --warn:#8a5d1b;
+  --bad:#9b2f2f;
+  --font-display:'Spectral',Georgia,'Times New Roman',serif;
+  --font-body:'Spectral',Georgia,'Times New Roman',serif;
+  --font-ui:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c0f16;
+    --surface:#141924;
+    --surface-2:#1b2130;
+    --fg:#e9edf5;
+    --muted:#98a2b8;
+    --rule:#262d3d;
+    --accent:#8aa4ff;
+    --accent-soft:#1c2440;
+    --ok:#6fcf9b;
+    --warn:#e0b060;
+    --bad:#f08b8b;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c0f16;
+  --surface:#141924;
+  --surface-2:#1b2130;
+  --fg:#e9edf5;
+  --muted:#98a2b8;
+  --rule:#262d3d;
+  --accent:#8aa4ff;
+  --accent-soft:#1c2440;
+  --ok:#6fcf9b;
+  --warn:#e0b060;
+  --bad:#f08b8b;
+  color-scheme:dark;
+}
+
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);line-height:1.6}
+*{box-sizing:border-box}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:20px;padding-block:28px 72px}
+
+/* ---- masthead ---- */
+.masthead{border-bottom:2px solid var(--fg);padding-bottom:14px;margin-bottom:22px}
+.eyebrow{font-family:var(--font-ui);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+h1{font-family:var(--font-display);font-weight:600;font-size:clamp(30px,5vw,44px);line-height:1.08;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.standfirst{font-size:16px;color:var(--muted);margin:10px 0 0;max-width:62ch}
+
+/* ---- search ---- */
+.seek{display:flex;gap:8px;margin:22px 0 10px;flex-wrap:wrap}
+.seek input{flex:1 1 240px;min-width:0;font-family:var(--font-ui);font-size:15px;padding:11px 13px;border:1px solid var(--rule);border-radius:3px;background:var(--surface);color:var(--fg)}
+.seek input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+button{font-family:var(--font-ui);font-size:14px;cursor:pointer;border-radius:3px;border:1px solid transparent}
+.seek button{padding:11px 18px;background:var(--accent);color:#fff;font-weight:500}
+.seek button:disabled{opacity:.5;cursor:default}
+.seek button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+
+/* ---- breadcrumb ---- */
+.crumbs{font-family:var(--font-ui);font-size:13px;color:var(--muted);margin:0 0 20px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.crumbs button{background:none;color:var(--accent);padding:2px 0;font-size:13px;text-decoration:underline;text-underline-offset:2px}
+.crumbs span.sep{opacity:.5}
+.crumbs .here{color:var(--fg);font-weight:500}
+
+/* ---- node head ---- */
+.node-head{margin-bottom:8px}
+.node-head h2{font-family:var(--font-display);font-size:clamp(22px,3.4vw,30px);font-weight:600;margin:0;text-wrap:balance}
+.node-head p{color:var(--muted);margin:6px 0 0;max-width:62ch;font-size:15.5px}
+
+/* ---- children chips ---- */
+.sub-label{font-family:var(--font-ui);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:26px 0 10px}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:8px;margin:0 0 6px;padding:0;list-style:none}
+.chip{width:100%;text-align:left;background:var(--surface);border:1px solid var(--rule);padding:11px 13px;display:block;transition:border-color .12s,background .12s}
+.chip:hover{border-color:var(--accent);background:var(--surface-2)}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.chip b{display:block;font-family:var(--font-ui);font-weight:600;font-size:14px;color:var(--fg);margin-bottom:2px}
+.chip i{display:block;font-style:normal;font-size:12.5px;color:var(--muted);line-height:1.45;font-family:var(--font-ui)}
+
+/* ---- actions ---- */
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 0}
+.ghost{background:var(--surface);border:1px solid var(--rule);color:var(--fg);padding:9px 15px;font-weight:500}
+.ghost:hover{border-color:var(--accent);color:var(--accent)}
+.ghost:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+/* ---- story ---- */
+.story{margin-top:34px}
+.opening{font-size:17.5px;line-height:1.62;max-width:64ch;margin:0 0 6px;border-left:3px solid var(--accent);padding-left:16px}
+.spine{list-style:none;margin:28px 0 0;padding:0;border-left:1px solid var(--rule);position:relative}
+.beat{display:grid;grid-template-columns:1fr minmax(0,286px);gap:18px 26px;padding:0 0 30px 24px;position:relative}
+.beat::before{content:"";position:absolute;left:-4.5px;top:9px;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.beat-text{min-width:0}
+.yr{font-family:var(--font-mono);font-size:12px;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.move{font-family:var(--font-ui);font-weight:600;font-size:15px;margin:3px 0 5px;line-height:1.35}
+.beat-text p{margin:0;font-size:15.5px;line-height:1.62;max-width:56ch}
+
+/* citation card */
+.cite{background:var(--surface);border:1px solid var(--rule);border-top:2px solid var(--accent);padding:12px 13px;min-width:0;align-self:start}
+.cite .ct{font-family:var(--font-ui);font-size:13px;font-weight:600;line-height:1.4;margin:0 0 5px;overflow-wrap:break-word}
+.cite .ca{font-size:12.5px;color:var(--muted);margin:0 0 3px;line-height:1.45;overflow-wrap:break-word}
+.cite .cv{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);margin:0 0 9px;overflow-wrap:break-word}
+.cite .links{display:flex;gap:10px;flex-wrap:wrap}
+.cite a{font-family:var(--font-ui);font-size:12.5px;color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:1px}
+.cite a:hover{opacity:.75}
+.cite a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* cross-check verdicts */
+.cite.doubtful{border-top-color:var(--warn)}
+.cite.wrong{border-top-color:var(--bad)}
+.verdict{margin:10px 0 0;padding-top:9px;border-top:1px solid var(--rule);font-family:var(--font-ui);font-size:12px;line-height:1.5}
+.vtag{display:inline-block;font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:10px;margin-bottom:3px}
+.vtag.ok{color:var(--ok)}
+.vtag.doubt{color:var(--warn)}
+.vtag.bad{color:var(--bad)}
+.verdict .vnote{display:block;color:var(--muted);overflow-wrap:break-word}
+.checked{font-family:var(--font-ui);font-size:12px;color:var(--muted);margin:14px 0 0;padding:9px 12px;background:var(--surface-2);border-left:2px solid var(--rule);max-width:64ch}
+
+.closing{margin:4px 0 0 24px;padding:14px 16px;background:var(--accent-soft);border-left:3px solid var(--accent);max-width:64ch;font-size:15.5px}
+.closing b{font-family:var(--font-ui);font-size:11px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:5px;color:var(--muted);font-weight:600}
+
+/* ---- status ---- */
+.status{font-family:var(--font-ui);font-size:13.5px;color:var(--muted);padding:14px 0;display:flex;align-items:center;gap:9px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none;opacity:.7}}
+.err{font-family:var(--font-ui);font-size:13.5px;color:var(--fg);background:var(--surface-2);border-left:3px solid var(--accent);padding:12px 14px;margin:14px 0}
+
+
+/* running example */
+.example{background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--accent);padding:14px 16px;margin:22px 0 4px}
+.example h3{font-family:var(--font-mono);font-size:13px;font-weight:500;margin:0 0 7px;color:var(--accent);letter-spacing:0}
+.example p{margin:0;font-size:15px;line-height:1.6;max-width:62ch}
+.example .tag{font-family:var(--font-ui);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;font-weight:600}
+.backlink{font-family:var(--font-ui);font-size:13px;color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:1px}
+.backlink:hover{opacity:.75}
+footer{margin-top:52px;border-top:1px solid var(--rule);padding-top:16px;font-family:var(--font-ui);font-size:12px;color:var(--muted);line-height:1.6;max-width:70ch}
+
+@media (max-width:720px){
+  .beat{grid-template-columns:1fr;gap:12px}
+  .cite{margin-left:0}
+}
+</style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow"><a class="backlink" href="./index.html">← Concept Explorer</a></p>
+    <h1>Concept Lineage</h1>
+    <p class="standfirst">Name a field, open its subfields, and read how the ideas actually arrived &mdash; each turn in the story sitting next to the paper that forced it.</p>
+  </header>
+
+  <form class="seek" id="seekForm">
+    <input id="q" type="text" placeholder="logic, type theory, concurrency&hellip;" aria-label="Name a field" autocomplete="off">
+    <button type="submit" id="go">Open field</button>
+  </form>
+
+  <nav class="crumbs" id="crumbs" aria-label="Trail"></nav>
+
+  <div class="node-head">
+    <h2 id="nodeName">Logic</h2>
+    <p id="nodeBlurb">The study of valid inference &mdash; and, in computer science, of what a machine may be trusted to conclude.</p>
+  </div>
+
+  <section class="example" id="exampleBlock" hidden>
+    <span class="tag">Running example</span>
+    <h3 id="exTitle"></h3>
+    <p id="exText"></p>
+  </section>
+
+  <div id="childBlock">
+    <p class="sub-label" id="subLabel">Subfields</p>
+    <ul class="chips" id="chips"></ul>
+  </div>
+
+  <div class="actions" id="actions">
+    <button class="ghost" id="tellStory">Tell the story of this field</button>
+  </div>
+
+  <div id="status"></div>
+  <div class="story" id="story"></div>
+
+  <footer>
+    Each history is drafted by one model, then audited by a second one that sees only the claims and
+    their citations. Every citation is looked up in Semantic Scholar and compared on title, authors
+    and year; what came back is shown on the card. Google Scholar has no public API and blocks
+    automated queries, so that link is a manual check, not a verified one. Papers marked
+    <em>no match</em> or <em>disputed</em> should be treated as unverified. The entries for logic and
+    separation logic were written by hand.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var SEED = {
+    "logic": {
+      blurb: "The study of valid inference — and, in computer science, of what a machine may be trusted to conclude.",
+      example: {
+        title: "transfer(a, b, n)",
+        text: "Move n from account a to account b. Other code runs at the same time, the accounts may sit on different machines, and the network may drop messages. Every branch of logic below exists because this one procedure demands something the others cannot say."
+      },
+      children: [
+        {name:"Hoare Logic", demand:"State what the transfer guarantees, at all"},
+        {name:"Separation Logic", demand:"Say a and b are different cells, without listing every inequality"},
+        {name:"Linear Logic", demand:"Stop the proof from spending the same money twice"},
+        {name:"Temporal Logic", demand:"Say ‘eventually settles’ and ‘never stuck in limbo’"},
+        {name:"Modal Logic", demand:"Talk about what the other machine knows, not just what is true"},
+        {name:"Intuitionistic Logic", demand:"Make ‘a solvent account exists’ hand you the account"},
+        {name:"Higher-Order Logic", demand:"Quantify over the account invariants themselves"}
+      ]
+    },
+    "type theory": {
+      blurb: "Types as propositions, programs as proofs — and the long argument about how much a type should say.",
+      example: {
+        title: "firstLine(path)",
+        text: "Open a file, read its first line, close it. The file may be empty, the caller may be holding other resources, and half the codebase around it is untyped. Each branch below widens what the type is allowed to promise."
+      },
+      children: [
+        {name:"Simply Typed Lambda Calculus", demand:"Give the function a type at all, and have it terminate"},
+        {name:"Polymorphism", demand:"Work for any line type without rewriting the function"},
+        {name:"Dependent Types", demand:"Let the type itself say the file is non-empty"},
+        {name:"Substructural Types", demand:"Close the handle exactly once — not zero times, not twice"},
+        {name:"Session Types", demand:"Put open → read → close order into the type"},
+        {name:"Gradual Typing", demand:"Interoperate with the untyped half without lying"}
+      ]
+    },
+    "concurrency": {
+      blurb: "What it means for a program to be correct when more than one thing is happening at once.",
+      example: {
+        title: "Two threads, one counter",
+        text: "Both threads run count++ a thousand times. The answer should be two thousand and is not. Explaining exactly why, and what discipline would have prevented it, is what each of these areas was built to do."
+      },
+      children: [
+        {name:"Memory Models", demand:"Say which reorderings the hardware and compiler may perform"},
+        {name:"Linearizability", demand:"Define what ‘the counter is correct’ even means"},
+        {name:"Concurrent Separation Logic", demand:"Prove non-interference by tracking who owns the cell"},
+        {name:"Process Calculi", demand:"Treat the interaction itself as the thing being described"},
+        {name:"Transactional Memory", demand:"Make the increment atomic without hand-placed locks"}
+      ]
+    },
+    "distributed systems": {
+      blurb: "Correctness when the parts fail independently and the network refuses to say which.",
+      example: {
+        title: "Two replicas, one partition",
+        text: "The same account is replicated on two machines. The link between them drops, and a withdrawal arrives at each side. Every area below is a different answer to what the system should do next."
+      },
+      children: [
+        {name:"Consensus", demand:"Force both sides to agree on one order before acting"},
+        {name:"Consistency Models", demand:"Say precisely what a read is allowed to return"},
+        {name:"CRDTs", demand:"Let both sides proceed and still converge afterwards"},
+        {name:"Failure Detectors", demand:"Decide whether the other side is dead or just slow"},
+        {name:"Byzantine Fault Tolerance", demand:"Survive a replica that reports a balance it knows is false"}
+      ]
+    },
+    "verification": {
+      blurb: "Proving a program meets its specification — and arguing about how much of that proof a machine should carry.",
+      example: {
+        title: "sort(xs) must not lose an element",
+        text: "The output should be ordered and a permutation of the input. Checking that on every input is impossible by testing, so each area below is a different bargain between how much you prove and how much you automate."
+      },
+      children: [
+        {name:"Model Checking", demand:"Search every reachable state, for a bounded version"},
+        {name:"Abstract Interpretation", demand:"Approximate soundly when the state space will not fit"},
+        {name:"SMT Solving", demand:"Discharge the arithmetic obligations automatically"},
+        {name:"Proof Assistants", demand:"Carry the permutation argument for unbounded inputs"},
+        {name:"Refinement", demand:"Derive the fast implementation from the obvious one"}
+      ]
+    },
+    "automata theory": {
+      blurb: "Machines defined by what they can remember, and the languages that fall out.",
+      example: {
+        title: "Is this bracket sequence balanced?",
+        text: "A stream of opening and closing brackets arrives. Deciding whether it is well-formed turns out to be exactly a question about memory, and each machine below is defined by how much memory it is allowed."
+      },
+      children: [
+        {name:"Finite Automata", demand:"Show that no fixed amount of memory suffices"},
+        {name:"Pushdown Automata", demand:"Add a stack, and the problem becomes decidable"},
+        {name:"Tree Automata", demand:"Recognise the nesting structure rather than the string"},
+        {name:"ω-Automata", demand:"Handle a stream that never ends"},
+        {name:"Timed Automata", demand:"Require each bracket to close within a deadline"}
+      ]
+    }
+  };
+
+  // One hand-written narrative, so the first screen shows the real thing
+  // rather than a spinner. Threaded through the same transfer(a,b,n) example.
+  var SEED_STORY = {
+    "separation logic": {
+      opening: "Hoare's rules let you write down what transfer(a, b, n) is supposed to do. They stop working the moment a and b might be the same account. The rules proceed by substitution, and substitution has to know which name refers to which cell. A heap will not tell you that. What follows is the long effort to reason about the part of memory you touched without first describing every part you did not.",
+      beats: [
+        {year:1969, move:"Programs get a proof system", text:"Hoare gave programs a calculus: a precondition, a command, a postcondition, with one rule per construct. You could finally state what transfer guarantees and check the claim. The assignment rule worked by substituting into the assertion, which quietly assumed every variable named its own location.", paper:{title:"An Axiomatic Basis for Computer Programming", authors:"C. A. R. Hoare", venue:"Communications of the ACM", year:1969}},
+        {year:1972, move:"Pointers break substitution", text:"Burstall tried the same method on programs that follow pointers. It worked, but every specification grew a tail of clauses saying which pointers were not equal. For transfer you write a ≠ b by hand. For a linked structure you write it about everything, and the specification stops being readable.", paper:{title:"Some Provable Inductive Assertions About Programs That Alter Data Structures", authors:"R. M. Burstall", venue:"Machine Intelligence 7", year:1972}},
+        {year:2001, move:"Disjointness moves into the connective", text:"Ishtiaq and O'Hearn took the separating conjunction from bunched implications and read it as a claim about the heap. P ∗ Q holds when the heap splits in two, P true of one half and Q of the other. Now a ≠ b is not a side condition you remember to write. It is what the connective means. The frame rule follows: if transfer touches only a and b, the rest of the heap is untouched and never has to be mentioned.", paper:{title:"BI as an Assertion Language for Mutable Data Structures", authors:"Samin Ishtiaq, Peter W. O'Hearn", venue:"POPL", year:2001}},
+        {year:2002, move:"The system gets assembled", text:"Reynolds put the pieces together with a worked semantics and a set of examples — list reversal, trees, Schorr-Waite. The proofs stayed roughly the size of the code they described, which had not been true before. This is the paper people date the field from.", paper:{title:"Separation Logic: A Logic for Shared Mutable Data Structures", authors:"John C. Reynolds", venue:"LICS", year:2002}},
+        {year:2004, move:"Ownership handles threads", text:"If a thread owns a piece of heap, nothing else can interfere with it. Concurrent reasoning then reduces to bookkeeping about who owns what and when ownership moves. Two threads running transfer on disjoint accounts need no reasoning about each other at all. Brookes supplied the soundness proof the same year.", paper:{title:"Resources, Concurrency and Local Reasoning", authors:"Peter W. O'Hearn", venue:"CONCUR", year:2004}},
+        {year:2009, move:"The preconditions infer themselves", text:"Until this point somebody had to write the precondition before any analysis could start, which kept the method among people who already understood the proof. Bi-abduction infers the missing precondition and the leftover frame together. That let it run over code nobody had annotated, which is how it ended up inside Facebook's Infer.", paper:{title:"Compositional Shape Analysis by Means of Bi-Abduction", authors:"Cristiano Calcagno, Dino Distefano, Peter W. O'Hearn, Hongseok Yang", venue:"POPL", year:2009}},
+        {year:2015, move:"A dozen logics become one", text:"By 2015 there were many concurrent separation logics, each with its own hard-coded notion of permission or protocol. Iris showed they are instances of one construction: user-defined partial commutative monoids plus invariants, mechanised in Coq. You stop inventing a logic per problem and instantiate the same one.", paper:{title:"Iris: Monoids and Invariants as an Orthogonal Basis for Concurrent Reasoning", authors:"Ralf Jung, David Swasey, Filip Sieczkowski, Kasper Svendsen, Aaron Turon, Lars Birkedal, Derek Dreyer", venue:"POPL", year:2015}},
+        {year:2018, move:"A shipping language gets checked", text:"Rust's safety argument has a gap: the standard library's internals use unsafe code the type system cannot justify on its own. RustBelt closed it in Iris, proving the ownership discipline sound including those internals. A production language had its central claim mechanically checked.", paper:{title:"RustBelt: Securing the Foundations of the Rust Programming Language", authors:"Ralf Jung, Jacques-Henri Jourdan, Robbert Krebbers, Derek Dreyer", venue:"POPL", year:2018}}
+      ],
+      open: "All of this assumes one heap on one machine, where two things are separate because their addresses differ. Replicate that account across machines and the question changes shape. Separateness is no longer about addresses but about which operations commute. What plays the part of the frame rule there is still open."
+    }
+  };
+
+  // ---------- backend ----------
+  // Runs in two places. Inside claude.ai the page asks Claude directly.
+  // On GitHub Pages it goes through the Cloudflare Worker.
+  var PROXY = 'https://cs-research-proxy.rrangaiyengar.workers.dev';
+  var DRAFT_ROUTE = '/gemini';   // '' = Claude, '/gemini', '/groq'
+  var AUDIT_ROUTE = '/groq';     // must differ from DRAFT_ROUTE to be a real second opinion
+  var S2 = 'https://api.semanticscholar.org/graph/v1/paper/search';
+
+  var sample = null, mode = null;
+
+  async function backend(){
+    if (mode) return mode;
+    try { sample = (window.claude && window.claude.use) ? await window.claude.use('sample') : null; }
+    catch (e) { sample = null; }
+    mode = sample ? 'claude' : 'worker';
+    return mode;
+  }
+
+  function routeName(r){
+    if (mode === 'claude') return 'Claude';
+    return r === '/gemini' ? 'Gemini' : r === '/groq' ? 'Groq' : 'Claude';
+  }
+
+  function parseLoose(raw){
+    if (!raw) return null;
+    var t = String(raw).trim().replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();
+    try { return JSON.parse(t); } catch (e) {}
+    var a = t.indexOf('{'), b = t.lastIndexOf('}');
+    if (a > -1 && b > a) { try { return JSON.parse(t.slice(a, b+1)); } catch (e2) {} }
+    return null;
+  }
+
+  async function askJSON(prompt, route, tier, maxTokens){
+    var m = await backend();
+    if (m === 'claude') return await sample.json(prompt, { modelTier: tier || 'default', cache: true });
+
+    var r = await fetch(PROXY + route, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ max_tokens: maxTokens || 3000, messages:[{role:'user', content:prompt}] })
+    });
+    var j = await r.json().catch(function(){ return {}; });
+    if (!r.ok) { var e = new Error(j.error ? j.error.message : 'HTTP ' + r.status); e.http = r.status; throw e; }
+    var raw = route === ''
+      ? (j.content && j.content[0] ? j.content[0].text : '')
+      : (j.choices && j.choices[0] ? j.choices[0].message.content : '');
+    return parseLoose(raw);
+  }
+
+  // Shared with every generated prose prompt. The point is to strip the
+  // register that gives machine writing away.
+  var VOICE =
+    'Voice rules, follow them strictly:\n' +
+    '- Write the way a researcher explains something to a colleague who knows the area. Plain and direct.\n' +
+    '- Vary sentence length. Some sentences should be short.\n' +
+    '- Never use: revolutionised, paved the way, landmark, seminal, cornerstone, game-changing, ' +
+    'at its core, it is worth noting, fundamentally, crucially, delve, leverage, robust, powerful.\n' +
+    '- No asides set off by em-dashes. No "not just X, but Y". No colon-then-reveal sentences.\n' +
+    '- No rhetorical questions. No sentence beginning "And yet" or "But here is the thing".\n' +
+    '- Do not open consecutive sentences with the same word or construction.\n' +
+    '- Prefer concrete nouns and active verbs. Name people and papers rather than "researchers".\n' +
+    '- State what failed before. That is the interesting part, not the achievement.\n';
+
+  async function askChildren(field){
+    var prompt =
+      'You are mapping how a field of computer science divides up, for a PhD student in programming ' +
+      'languages and formal methods.\n\nField: "' + field + '"\n\n' +
+      'First choose ONE concrete running example: a specific procedure, system or question from this ' +
+      'field, small enough to state in two sentences. It must be an example that every subfield below ' +
+      'has something to say about.\n\n' +
+      'Then list 5 to 9 subfields. For each, give the "demand": the one thing the running example needs ' +
+      'that this subfield exists to supply, and that the others cannot express. Under 11 words, written ' +
+      'as a task, e.g. "Say a and b are different cells, without listing every inequality".\n\n' +
+      'The reader should finish the list understanding why these had to become separate areas.\n\n' +
+      VOICE + '\n' +
+      'Return JSON only, no prose:\n' +
+      '{"blurb":"one sentence under 24 words on what this field studies",' +
+      '"example":{"title":"short label for the example","text":"2-3 sentences stating it"},' +
+      '"children":[{"name":"Subfield Name","demand":"what the example needs here"}]}';
+    return await askJSON(prompt, DRAFT_ROUTE, 'default', 1800);
+  }
+
+  async function askStory(field, trail, example){
+    var ctx = trail.length > 1 ? ' It sits within ' + trail.slice(0,-1).join(' → ') + '.' : '';
+    var ex = example
+      ? '\nCarry this running example through the whole narrative, returning to it at each turn so the ' +
+        'reader sees what each step made possible that the previous one could not:\n' +
+        example.title + ' — ' + example.text + '\n'
+      : '';
+    var prompt =
+      'Write the intellectual history of "' + field + '" in computer science as a sequence of turning points.' +
+      ctx + ex + '\n' +
+      'Each beat is one specific move somebody made, and the problem that forced it. Say what the ' +
+      'previous approach could not do. 6 to 9 beats, earliest first.\n\n' +
+      'Cite only papers you are confident exist, with correct authors, venue and year. Prefer canonical ' +
+      'ones. A citation you are unsure about is worse than none: a separate model and Semantic Scholar ' +
+      'will both check these, and wrong ones will be shown to the reader as wrong.\n\n' +
+      VOICE + '\n' +
+      'Return JSON only, no prose:\n' +
+      '{"opening":"2-3 sentences stating the problem the field began from, in terms of the example",' +
+      '"beats":[{"year":1969,"move":"short label under 7 words",' +
+      '"text":"2-4 sentences","paper":{"title":"","authors":"","venue":"","year":1969}}],' +
+      '"open":"1-2 sentences on what is still unresolved"}';
+    return await askJSON(prompt, DRAFT_ROUTE, 'complex', 4000);
+  }
+
+  // Second model. Sees the claims and citations, not the reasoning that produced them.
+  async function askAudit(field, beats){
+    var items = beats.map(function(b,i){
+      var p = b.paper || {};
+      return { i:i, title:p.title, authors:p.authors, venue:p.venue, year:p.year, claim:b.text };
+    });
+    var prompt =
+      'Another model drafted a history of "' + field + '" and attached a citation to each claim. ' +
+      'Audit the citations. You are the check on its mistakes, so be sceptical. Confirming a paper ' +
+      'that does not exist is the worst outcome here.\n\n' +
+      'For each entry decide:\n' +
+      '"confirmed" — the paper exists, authors, venue and year are right, and it supports the claim.\n' +
+      '"doubtful" — real paper, but a detail is off or it does not really support the claim.\n' +
+      '"wrong" — you do not believe this paper exists, or it is badly misattributed.\n\n' +
+      'Prefer "doubtful" to guessing. Each note under 22 words, saying what specifically is off.\n\n' +
+      'Entries:\n' + JSON.stringify(items) + '\n\n' +
+      'Return JSON only, no prose:\n{"verdicts":[{"i":0,"status":"confirmed","note":""}]}';
+    return await askJSON(prompt, AUDIT_ROUTE, 'default', 2500);
+  }
+
+  // ---------- Semantic Scholar ----------
+  function norm(s){
+    return String(s||'').toLowerCase().replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+  }
+  function titleClose(a,b){
+    a = norm(a); b = norm(b);
+    if (!a || !b) return 0;
+    if (a === b) return 1;
+    var aw = a.split(' '), bw = new Set(b.split(' '));
+    var hit = aw.filter(function(w){ return w.length > 3 && bw.has(w); }).length;
+    var denom = aw.filter(function(w){ return w.length > 3; }).length || 1;
+    return hit / denom;
+  }
+  function surnames(s){
+    return String(s||'').split(/,| and /).map(function(n){
+      var parts = n.trim().split(/\s+/);
+      return norm(parts[parts.length-1]);
+    }).filter(Boolean);
+  }
+
+  async function checkS2(paper){
+    if (!paper || !paper.title) return { status:'unchecked' };
+    var url = S2 + '?limit=3&fields=title,year,venue,authors,citationCount,externalIds,url&query=' +
+              encodeURIComponent(paper.title);
+    var r;
+    try { r = await fetch(url, { headers:{ 'Accept':'application/json' } }); }
+    catch (e) { return { status:'unavailable' }; }          // CSP-blocked inside an artifact
+    if (r.status === 429) return { status:'ratelimited' };
+    if (!r.ok) return { status:'unavailable' };
+
+    var j = await r.json().catch(function(){ return null; });
+    if (!j || !j.data || !j.data.length) return { status:'absent' };
+
+    var best = null, bestScore = 0;
+    j.data.forEach(function(c){
+      var sc = titleClose(paper.title, c.title);
+      if (sc > bestScore) { bestScore = sc; best = c; }
+    });
+    if (!best || bestScore < 0.6) return { status:'absent' };
+
+    var notes = [];
+    if (paper.year && best.year && Math.abs(+paper.year - +best.year) > 1)
+      notes.push('year given as ' + paper.year + ', Semantic Scholar has ' + best.year);
+
+    var claimed = surnames(paper.authors);
+    var actual = (best.authors||[]).map(function(a){ return norm(a.name).split(' ').pop(); });
+    if (claimed.length && actual.length){
+      var overlap = claimed.filter(function(s){ return actual.indexOf(s) > -1; }).length;
+      if (!overlap) notes.push('none of the named authors match the record');
+    }
+
+    return {
+      status: notes.length ? 'mismatch' : 'found',
+      note: notes.join('; '),
+      title: best.title,
+      year: best.year,
+      venue: best.venue,
+      citations: best.citationCount,
+      url: best.url || (best.externalIds && best.externalIds.DOI
+            ? 'https://doi.org/' + best.externalIds.DOI : null)
+    };
+  }
+
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+  async function checkAllS2(beats, onProgress){
+    var out = [];
+    for (var i = 0; i < beats.length; i++){
+      out.push(await checkS2(beats[i].paper));
+      if (onProgress) onProgress(i + 1, beats.length);
+      if (out[i].status === 'unavailable') {            // blocked outright; stop hammering
+        while (out.length < beats.length) out.push({ status:'unavailable' });
+        break;
+      }
+      if (i < beats.length - 1) await sleep(360);       // stay under the public rate limit
+    }
+    return out;
+  }
+
+  // ---------- state ----------
+  var state = { trail: [], children: {}, examples: {}, stories: {} };
+
+  var el = {};
+  ['crumbs','nodeName','nodeBlurb','exampleBlock','exTitle','exText','chips','childBlock',
+   'subLabel','story','status','actions','tellStory','seekForm','q'].forEach(function(id){
+    el[id] = document.getElementById(id);
+  });
+
+  function key(s){ return String(s||'').trim().toLowerCase(); }
+  function esc(s){
+    return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function current(){ return state.trail[state.trail.length-1]; }
+  function setStatus(m){
+    el.status.innerHTML = m ? '<div class="status"><span class="dot"></span><span>'+esc(m)+'</span></div>' : '';
+  }
+  function setError(m){ el.status.innerHTML = '<div class="err">'+esc(m)+'</div>'; }
+
+  // ---------- render ----------
+  function renderCrumbs(){
+    el.crumbs.innerHTML = state.trail.map(function(nm,i){
+      var sep = i ? '<span class="sep">→</span>' : '';
+      return sep + (i === state.trail.length-1
+        ? '<span class="here">'+esc(nm)+'</span>'
+        : '<button type="button" data-i="'+i+'">'+esc(nm)+'</button>');
+    }).join('');
+  }
+
+  function renderExample(ex){
+    if (!ex || !ex.text){ el.exampleBlock.hidden = true; return; }
+    el.exampleBlock.hidden = false;
+    el.exTitle.textContent = ex.title || 'Running example';
+    el.exText.textContent = ex.text;
+  }
+
+  function renderChildren(kids){
+    if (!kids || !kids.length){ el.childBlock.hidden = true; return; }
+    el.childBlock.hidden = false;
+    el.subLabel.textContent = 'What the example demands';
+    el.chips.innerHTML = kids.map(function(c){
+      var why = c.demand || c.blurb || '';
+      return '<li><button type="button" class="chip" data-name="'+esc(c.name)+'">'+
+             '<b>'+esc(c.name)+'</b>'+(why?'<i>'+esc(why)+'</i>':'')+'</button></li>';
+    }).join('');
+  }
+
+  function verdictMarkup(v){
+    if (!v) return '';
+    var s2 = v.s2, au = v.audit, rows = '';
+
+    if (s2){
+      if (s2.status === 'found'){
+        rows += '<span class="vtag ok">Semantic Scholar · found</span>'+
+                '<span class="vnote">'+esc(s2.title)+
+                (s2.citations != null ? ' · '+Number(s2.citations).toLocaleString()+' citations' : '')+'</span>';
+      } else if (s2.status === 'mismatch'){
+        rows += '<span class="vtag doubt">Semantic Scholar · detail off</span>'+
+                '<span class="vnote">'+esc(s2.note)+'</span>';
+      } else if (s2.status === 'absent'){
+        rows += '<span class="vtag bad">Semantic Scholar · no match</span>'+
+                '<span class="vnote">Nothing with this title came back. Treat as unverified.</span>';
+      } else if (s2.status === 'ratelimited'){
+        rows += '<span class="vtag doubt">Semantic Scholar · rate limited</span>';
+      } else if (s2.status === 'unavailable'){
+        rows += '<span class="vtag doubt">Semantic Scholar · not reachable here</span>';
+      }
+    }
+
+    if (au && au.status){
+      var cls = au.status === 'confirmed' ? 'ok' : au.status === 'wrong' ? 'bad' : 'doubt';
+      var label = au.status === 'confirmed' ? 'supports the claim'
+                : au.status === 'wrong' ? 'disputed' : 'doubtful';
+      rows += '<span class="vtag '+cls+'" style="margin-top:6px">'+esc(au.by||'Cross-check')+' · '+label+'</span>';
+      if (au.note) rows += '<span class="vnote">'+esc(au.note)+'</span>';
+    }
+
+    return rows ? '<div class="verdict">'+rows+'</div>' : '';
+  }
+
+  function cardClass(v){
+    if (!v) return '';
+    if ((v.s2 && v.s2.status === 'absent') || (v.audit && v.audit.status === 'wrong')) return ' wrong';
+    if ((v.s2 && v.s2.status === 'mismatch') || (v.audit && v.audit.status === 'doubtful')) return ' doubtful';
+    return '';
+  }
+
+  function renderStory(st, verdicts, checkedLine){
+    if (!st){ el.story.innerHTML=''; return; }
+    var html = '';
+    if (st.opening) html += '<p class="opening">'+esc(st.opening)+'</p>';
+    var beats = st.beats || [];
+    if (beats.length){
+      html += '<ol class="spine">';
+      beats.forEach(function(b,i){
+        var p = b.paper || {}, v = verdicts ? verdicts[i] : null;
+        var qs = encodeURIComponent(p.title||'');
+        var s2url = (v && v.s2 && v.s2.url) ? v.s2.url
+                  : 'https://www.semanticscholar.org/search?q='+qs;
+        html += '<li class="beat"><div class="beat-text">'+
+          (b.year?'<div class="yr">'+esc(b.year)+'</div>':'')+
+          (b.move?'<div class="move">'+esc(b.move)+'</div>':'')+
+          '<p>'+esc(b.text)+'</p></div>'+
+          (p.title
+            ? '<aside class="cite'+cardClass(v)+'">'+
+                '<p class="ct">'+esc(p.title)+'</p>'+
+                (p.authors?'<p class="ca">'+esc(p.authors)+'</p>':'')+
+                '<p class="cv">'+esc([p.venue,p.year].filter(Boolean).join(' · '))+'</p>'+
+                '<div class="links">'+
+                  '<a href="'+esc(s2url)+'" target="_blank" rel="noopener">Semantic Scholar</a>'+
+                  '<a href="https://scholar.google.com/scholar?q='+qs+'" target="_blank" rel="noopener">Google Scholar</a>'+
+                '</div>'+
+                verdictMarkup(v)+
+              '</aside>'
+            : '<aside></aside>')+
+          '</li>';
+      });
+      html += '</ol>';
+    }
+    if (st.open) html += '<div class="closing"><b>Still open</b>'+esc(st.open)+'</div>';
+    if (checkedLine) html += '<p class="checked">'+esc(checkedLine)+'</p>';
+    el.story.innerHTML = html;
+  }
+
+  // ---------- navigation ----------
+  function friendly(e, what){
+    var c = e && e.code;
+    if (c === 'not_granted') return 'Claude access was declined, so only the hand-written fields are available.';
+    if (c === 'rate_limited' || (e && e.http === 429)) return 'Rate limited. Give it a minute and try again.';
+    if (c === 'cancelled') return 'Cancelled.';
+    return 'Could not ' + what + '. ' + (e && e.message ? e.message : 'Try again.');
+  }
+
+  async function go(name, resetTo){
+    var k = key(name);
+    if (!k) return;
+
+    if (typeof resetTo === 'number') state.trail = state.trail.slice(0, resetTo+1);
+    else if (!(state.trail.length && key(current()) === k)) state.trail.push(name);
+    if (!state.trail.length) state.trail = [name];
+
+    var label = current(), seed = SEED[k];
+    el.nodeName.textContent = label;
+    el.nodeBlurb.textContent = seed && seed.blurb ? seed.blurb : '';
+    el.nodeBlurb.hidden = !el.nodeBlurb.textContent;
+    renderCrumbs();
+    el.story.innerHTML = '';
+    el.tellStory.textContent = 'Tell the story of ' + label;
+    el.actions.hidden = false;
+
+    var ex = state.examples[k] || (seed && seed.example) || null;
+    // a subfield inherits the example of the field above it
+    if (!ex && state.trail.length > 1) ex = state.examples[key(state.trail[state.trail.length-2])] || null;
+    state.examples[k] = ex;
+    renderExample(ex);
+
+    if (state.children[k]) { renderChildren(state.children[k]); setStatus(''); }
+    else if (seed) { state.children[k] = seed.children; renderChildren(seed.children); setStatus(''); }
+    else {
+      el.childBlock.hidden = true;
+      setStatus('Working out how ' + label + ' divides up…');
+      try {
+        var res = await askChildren(label);
+        if (res && res.children && res.children.length){
+          state.children[k] = res.children;
+          if (res.example){ state.examples[k] = res.example; renderExample(res.example); }
+          if (res.blurb && !el.nodeBlurb.textContent){
+            el.nodeBlurb.textContent = res.blurb; el.nodeBlurb.hidden = false;
+          }
+          renderChildren(res.children);
+          setStatus('');
+        } else {
+          setError('Nothing came back for that. Try a broader name, or one of the fields listed above.');
+        }
+      } catch (e) { setError(friendly(e, 'map that field')); }
+    }
+
+    if (SEED_STORY[k]) {
+      state.stories[k] = { story: SEED_STORY[k], verdicts: null,
+                           line: 'Written by hand. The citations below are ones I checked myself.' };
+      renderStory(SEED_STORY[k], null, state.stories[k].line);
+    }
+  }
+
+  async function tellStory(){
+    var label = current(); if (!label) return;
+    var k = key(label), cached = state.stories[k];
+    if (cached){ renderStory(cached.story, cached.verdicts, cached.line); return; }
+
+    el.tellStory.disabled = true;
+    try {
+      await backend();
+      var drafter = routeName(DRAFT_ROUTE), auditor = routeName(AUDIT_ROUTE);
+
+      setStatus(drafter + ' is drafting the history of ' + label + '…');
+      var st = await askStory(label, state.trail, state.examples[k]);
+      if (!st || !st.beats || !st.beats.length){
+        setError('No usable history came back for ' + label + '. Try a more specific subfield.');
+        return;
+      }
+
+      // show the draft immediately, then fill verdicts in as they land
+      renderStory(st, null, null);
+
+      var verdicts = st.beats.map(function(){ return {}; });
+
+      setStatus('Checking ' + st.beats.length + ' citations against Semantic Scholar…');
+      var s2 = await checkAllS2(st.beats, function(done, total){
+        setStatus('Checking citations against Semantic Scholar… ' + done + ' of ' + total);
+      });
+      s2.forEach(function(r,i){ verdicts[i].s2 = r; });
+      renderStory(st, verdicts, null);
+
+      var auditName = (mode === 'claude') ? 'Second pass' : auditor;
+      setStatus(auditName + ' is auditing whether each paper supports its claim…');
+      try {
+        var au = await askAudit(label, st.beats);
+        if (au && au.verdicts){
+          au.verdicts.forEach(function(v){
+            if (verdicts[v.i]) verdicts[v.i].audit = { status:v.status, note:v.note, by:auditName };
+          });
+        }
+      } catch (e) { /* audit is best-effort; the S2 result still stands */ }
+
+      var reachable = s2.some(function(r){ return r.status !== 'unavailable'; });
+      var line = 'Drafted by ' + drafter + ', audited by ' + auditName +
+        (reachable ? ', citations checked against Semantic Scholar.'
+                   : '. Semantic Scholar could not be reached from this page, so citation existence is unverified here.') +
+        ' Google Scholar has no API and blocks automated queries, so that link is for you to check by hand.';
+
+      state.stories[k] = { story: st, verdicts: verdicts, line: line };
+      renderStory(st, verdicts, line);
+      setStatus('');
+    } catch (e) {
+      setError(friendly(e, 'trace that history'));
+    } finally {
+      el.tellStory.disabled = false;
+    }
+  }
+
+  // ---------- events ----------
+  el.chips.addEventListener('click', function(ev){
+    var b = ev.target.closest('.chip'); if (b) go(b.getAttribute('data-name'));
+  });
+  el.crumbs.addEventListener('click', function(ev){
+    var b = ev.target.closest('button[data-i]');
+    if (b) go(state.trail[+b.getAttribute('data-i')], +b.getAttribute('data-i'));
+  });
+  el.tellStory.addEventListener('click', tellStory);
+  el.seekForm.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var v = el.q.value.trim(); if (!v) return;
+    state.trail = []; go(v); el.q.value = '';
+  });
+
+  // ---------- first frame ----------
+  if (window.claude && window.claude.use){
+    var eb = document.querySelector('.eyebrow');
+    if (eb) eb.textContent = 'PL \u00b7 Formal Methods \u00b7 Systems';
+  }
+
+  state.trail = ['Logic'];
+  state.examples['logic'] = SEED['logic'].example;
+  renderCrumbs();
+  renderExample(SEED['logic'].example);
+  renderChildren(SEED['logic'].children);
+  el.tellStory.textContent = 'Tell the story of Logic';
+
+})();
+</script>
+</body>
+</html>
